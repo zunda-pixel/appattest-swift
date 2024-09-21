@@ -2,7 +2,7 @@ import Foundation
 import SwiftASN1
 import X509
 
-public struct Statement: Decodable {
+public struct Statement: Decodable, Sendable, Hashable {
   public var certificates: [X509.Certificate]
   public var receipt: ASN1Node
 

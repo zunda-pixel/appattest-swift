@@ -1,6 +1,6 @@
 import Foundation
 
-public struct AuthenticatorData: Decodable {
+public struct AuthenticatorData: Decodable, Sendable, Hashable {
   public let rawData: Data
   /// "\(teamId).\(bundleId)"  SHA256 hash data
   public let relyingPartyId: Data

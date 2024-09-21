@@ -1,4 +1,4 @@
-public struct Attestation: Decodable {
+public struct Attestation: Decodable, Sendable, Hashable {
   public var format: String
   public var statement: Statement
   public var authenticatorData: AuthenticatorData

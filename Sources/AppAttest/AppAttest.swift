@@ -31,7 +31,7 @@ public struct AppAttest {
     }
     let relyingPartyId = Data(SHA256.hash(data: Data("\(teamId).\(bundleId)".utf8)))
     guard attestation.authenticatorData.relyingPartyId == relyingPartyId else {
-      throw AppAttestError.invalidFormat
+      throw AppAttestError.invalidRelyingPartyID
     }
 
     guard attestation.authenticatorData.credentialId == keyId else {

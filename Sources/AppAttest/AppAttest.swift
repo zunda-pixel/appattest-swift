@@ -38,17 +38,13 @@ public struct AppAttest {
       throw AppAttestError.invalidKeyId
     }
     
-    guard let certificate = attestation.statement.certificates.first else {
-      throw AppAttestError.missingCertificate
-    }
-    
     guard attestation.authenticatorData.counter == 0 else {
       throw AppAttestError.invalidCounter
     }
     
     try Self.verifyPublicKey(
       keyId: keyId,
-      certificate: certificate
+      certificate: attestation.statement.credetialCertificate
     )
     
     let nonce = Self.nonce(

@@ -111,10 +111,6 @@ extension AppAttest {
     }
   }
   
-  func verifyRelying() throws {
-    
-  }
-  
   // Complete
   static func verifyCertificates(
     credetialCertificate: Certificate,
@@ -172,7 +168,8 @@ struct SingleOctetSequence: DERParseable {
 
 extension String {
   func base64Decoded() -> Data? {
-    var encoded = replacingOccurrences(of: "-", with: "+")
+    var encoded = self
+      .replacingOccurrences(of: "-", with: "+")
       .replacingOccurrences(of: "_", with: "/")
     
     // Swift requires padding, but other languages don't always
@@ -180,7 +177,10 @@ extension String {
       encoded += "="
     }
     
-    return Data(base64Encoded: encoded, options: .ignoreUnknownCharacters)
+    return Data(
+      base64Encoded: encoded,
+      options: .ignoreUnknownCharacters
+    )
   }
 }
 

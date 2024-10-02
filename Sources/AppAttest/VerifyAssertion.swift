@@ -13,7 +13,7 @@ extension AppAttest {
     let assertion = try CBORDecoder.default.decode(Assertion.self, from: assertion)
 
     if assertion.authenticatorData.counter <= counter {
-      throw AppAttestError.invalidCounter
+      throw VerifyAssertionError.invalidCounter
     }
 
     try verifyRelyingPartyId(
@@ -37,17 +37,17 @@ extension AppAttest {
     let nonce = Data(SHA256.hash(data: nonceData))
     let signature = try P256.Signing.ECDSASignature(derRepresentation: assetion.signature)
     guard let publicKey = P256.Signing.PublicKey(certificate.publicKey) else {
-      throw AppAttestError.invalidPublicKey
+      throw VerifyAssertionError.invalidPublicKey
     }
     if publicKey.isValidSignature(signature, for: nonce) == false {
-      throw AppAttestError.invalidNonce
+      throw VerifyAssertionError.invalidNonce
     }
   }
 
   private func verifyRelyingPartyId(relyingPartyId: Data) throws {
     let appIdHash = Data(SHA256.hash(data: Data("\(self.teamId).\(self.bundleId)".utf8)))
     if relyingPartyId != appIdHash {
-      throw AppAttestError.invalidRelyingPartyID
+      throw VerifyAssertionError.invalidRelyingPartyID
     }
   }
 }

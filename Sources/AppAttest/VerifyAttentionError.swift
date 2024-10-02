@@ -1,10 +1,7 @@
-public enum AppAttestError: Error {
+public enum VerifyAttentionError: Error {
   case invalidFormat
   case invalidAaguid
   case invalidRelyingPartyID
-  case invalidCredentialId
-  case missingCertificate
-  case missingValidCertificate
   case invalidNonce
   case invalidPublicKey
   case invalidCounter

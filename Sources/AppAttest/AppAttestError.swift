@@ -10,6 +10,6 @@ public enum AppAttestError: Error {
   case invalidCounter
   case invalidKeyId
   case missingExtension
-  case missingCredetialCertificate
-  case missingIntermediateCertificateAuthority
+  case couldNotValidateCertificate
+  case failedValidateCertificate
 }

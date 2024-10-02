@@ -146,9 +146,12 @@ extension AppAttest {
     case .couldNotValidate(_):
       throw VerifyAttentionError.couldNotValidateCertificate
     case .validCertificate(let certificates):
-      if Set(certificates)
-        != Set([appleAppAttestationRootCa, credetialCertificate, intermediateCertificateAuthority])
-      {
+      let allCertificates = [
+        appleAppAttestationRootCa,
+        credetialCertificate,
+        intermediateCertificateAuthority
+      ]
+      if Set(certificates) != Set(allCertificates) {
         throw VerifyAttentionError.failedValidateCertificate
       }
     }
@@ -160,7 +163,7 @@ struct SingleOctetSequence: DERParseable {
   let octet: ASN1OctetString
 
   init(derEncoded rootNode: ASN1Node) throws {
-    octet = try DER.sequence(rootNode, identifier: rootNode.identifier) { nodes in
+    self.octet = try DER.sequence(rootNode, identifier: rootNode.identifier) { nodes in
       guard let node = nodes.next() else {
         throw ASN1Error.invalidASN1Object(reason: "Empty sequence! Expected single octet")
       }

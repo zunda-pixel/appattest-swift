@@ -1,8 +1,8 @@
-import Foundation
-import X509
 import Crypto
+import Foundation
 import PotentCBOR
 import SwiftASN1
+import X509
 
 extension AppAttest {
   public func verifyAttestatin(
@@ -19,40 +19,40 @@ extension AppAttest {
     guard attestation.authenticatorData.environment == environment else {
       throw AppAttestError.invalidAaguid
     }
-    
+
     guard attestation.authenticatorData.counter == 0 else {
       throw AppAttestError.invalidCounter
     }
-    
+
     try await Self.verifyCertificates(
       credetialCertificate: attestation.statement.credetialCertificate,
       intermediateCertificateAuthority: attestation.statement.intermediateCertificateAuthority
     )
-    
+
     try Self.verifyKeyId(
       keyId: keyId,
       credetialCertificate: attestation.statement.credetialCertificate
     )
-    
+
     try self.verifyRelyingParty(
       authenticatorData: attestation.authenticatorData
     )
-    
+
     try Self.verifyCredentialId(
       keyId: keyId,
       authenticatorData: attestation.authenticatorData
     )
-    
+
     try Self.verifyNonce(
       challenge: challenge,
       credetialCertificate: attestation.statement.credetialCertificate,
       authenticateData: attestation.authenticatorData
     )
-    
+
     return attestation
   }
-  
-  static func verifyNonce(
+
+  static private func verifyNonce(
     challenge: Data,
     credetialCertificate: X509.Certificate,
     authenticateData: Attestation.AuthenticatorData
@@ -66,9 +66,9 @@ extension AppAttest {
       fatalError()
     }
   }
-  
+
   // Complete
-  func verifyRelyingParty(
+  private func verifyRelyingParty(
     authenticatorData: Attestation.AuthenticatorData
   ) throws {
     let appId = Data(SHA256.hash(data: Data("\(self.teamId).\(self.bundleId)".utf8)))
@@ -76,9 +76,9 @@ extension AppAttest {
       throw AppAttestError.invalidRelyingPartyID
     }
   }
-  
+
   // Complete
-  static func verifyCredentialId(
+  static private func verifyCredentialId(
     keyId: Data,
     authenticatorData: Attestation.AuthenticatorData
   ) throws {
@@ -90,34 +90,34 @@ extension AppAttest {
       throw AppAttestError.invalidKeyId
     }
   }
-  
+
   // Complete
-  static func verifyKeyId(
+  static private func verifyKeyId(
     keyId: Data,
     credetialCertificate: X509.Certificate
   ) throws {
     guard let publicKey = P256.Signing.PublicKey(credetialCertificate.publicKey) else {
       throw AppAttestError.invalidPublicKey
     }
-    
+
     let hashedPublicKey = Data(SHA256.hash(data: publicKey.x963Representation))
-    
+
     guard let keyId = String(decoding: keyId, as: UTF8.self).base64Decoded() else {
       throw AppAttestError.invalidKeyId
     }
-    
+
     if keyId != hashedPublicKey {
       throw AppAttestError.invalidKeyId
     }
   }
-  
+
   // Complete
-  static func verifyCertificates(
+  static private func verifyCertificates(
     credetialCertificate: Certificate,
     intermediateCertificateAuthority: Certificate
   ) async throws {
     let appleAppAttestationRootCa: X509.Certificate
-    
+
     do {
       let path = Bundle.module.url(
         forResource: "Apple_App_Attestation_Root_CA",
@@ -129,21 +129,23 @@ extension AppAttest {
         pemEncoded: certificateDataString
       )
     }
-    
+
     var verifier = X509.Verifier(rootCertificates: .init([appleAppAttestationRootCa])) {
       RFC5280Policy(validationTime: .now)
     }
-    
+
     let result = await verifier.validate(
       leafCertificate: credetialCertificate,
       intermediates: .init([intermediateCertificateAuthority])
     )
-    
+
     switch result {
     case .couldNotValidate(let failures):
       throw AppAttestError.couldNotValidateCertificate
     case .validCertificate(let certificates):
-      if Set(certificates) != Set([appleAppAttestationRootCa, credetialCertificate, intermediateCertificateAuthority]) {
+      if Set(certificates)
+        != Set([appleAppAttestationRootCa, credetialCertificate, intermediateCertificateAuthority])
+      {
         throw AppAttestError.failedValidateCertificate
       }
     }
@@ -153,7 +155,7 @@ extension AppAttest {
 // https://github.com/Tyler-Keith-Thompson/RandomSideProjects/blob/60eba19e25f0aeb790c23d814924e977be400fb8/AppleAttestationService/Sources/App/Models/ASN1/SingleOctetSequence.swift
 struct SingleOctetSequence: DERParseable {
   let octet: ASN1OctetString
-  
+
   init(derEncoded rootNode: ASN1Node) throws {
     octet = try DER.sequence(rootNode, identifier: rootNode.identifier) { nodes in
       guard let node = nodes.next() else {
@@ -168,19 +170,19 @@ struct SingleOctetSequence: DERParseable {
 
 extension String {
   func base64Decoded() -> Data? {
-    var encoded = self
+    var encoded =
+      self
       .replacingOccurrences(of: "-", with: "+")
       .replacingOccurrences(of: "_", with: "/")
-    
+
     // Swift requires padding, but other languages don't always
     while encoded.count % 4 != 0 {
       encoded += "="
     }
-    
+
     return Data(
       base64Encoded: encoded,
       options: .ignoreUnknownCharacters
     )
   }
 }
-

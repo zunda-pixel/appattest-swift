@@ -20,14 +20,14 @@ extension Attestation {
     public let counter: UInt32
     public let environment: Environment
     public let credentialId: Data
-    
+
     private enum CodingKeys: String, CodingKey {
       case replyingPartyId
       case counter
       case environment = "aaguid"
       case credentialId
     }
-    
+
     // https://developer.apple.com/documentation/devicecheck/validating-apps-that-connect-to-your-server#Verify-the-attestation
     public init(from decoder: any Decoder) throws {
       let container = try decoder.singleValueContainer()
@@ -48,11 +48,12 @@ extension Attestation {
           Environment.self,
           .init(
             codingPath: [CodingKeys.environment],
-            debugDescription: "value is not a valid AAGUID: \(String(decoding: dataEnvironment, as: UTF8.self))"
+            debugDescription:
+              "value is not a valid AAGUID: \(String(decoding: dataEnvironment, as: UTF8.self))"
           )
         )
       }
-      
+
       // 32 bytes KeyId
       self.credentialId = data[55..<87]
     }

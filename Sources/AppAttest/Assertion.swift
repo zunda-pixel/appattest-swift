@@ -11,12 +11,12 @@ extension Assertion {
     /// "\(teamId).\(bundleId)"  SHA256 hash data
     public let relyingPartyId: Data
     public let counter: UInt32
-    
+
     private enum CodingKeys: String, CodingKey {
       case replyingPartyId
       case counter
     }
-    
+
     public init(from decoder: any Decoder) throws {
       let container = try decoder.singleValueContainer()
       let data = try container.decode(Data.self)

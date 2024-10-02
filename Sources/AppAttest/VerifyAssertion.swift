@@ -1,7 +1,6 @@
-import CryptoKit
+import Crypto
 import Foundation
 import PotentCBOR
-import SwiftCBOR
 import X509
 
 extension AppAttest {

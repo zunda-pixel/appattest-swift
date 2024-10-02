@@ -1,6 +1,6 @@
 import Foundation
 import X509
-import CryptoKit
+import Crypto
 import PotentCBOR
 import SwiftASN1
 
@@ -58,7 +58,7 @@ extension AppAttest {
     authenticateData: Attestation.AuthenticatorData
   ) throws {
     let clientDataHash = Data(SHA256.hash(data: challenge))
-    let nonceData: Data = Data(SHA256.hash(data: authenticateData.rawData + clientDataHash))
+    let nonceData = Data(SHA256.hash(data: authenticateData.rawData + clientDataHash))
     let ext = credetialCertificate.extensions.first(where: { $0.oid == [1, 2, 840, 113635, 100, 8, 2]})!
     let der = try DER.parse(ext.value)
     let octet = try SingleOctetSequence(derEncoded: der)

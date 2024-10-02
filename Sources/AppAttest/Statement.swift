@@ -8,7 +8,7 @@ extension Attestation {
     public var credetialCertificate: X509.Certificate
     /// intermediateCa(caCert)
     public var intermediateCertificateAuthority: X509.Certificate
-    public var receipt: ASN1Node
+    public var receipt: Data
 
     private enum CodingKeys: CodingKey {
       case x5c
@@ -27,9 +27,7 @@ extension Attestation {
       self.credetialCertificate = certificates.first!
       self.intermediateCertificateAuthority = certificates.last!
 
-      let receipt = try container.decode(Data.self, forKey: .receipt)
-      let berReceipt = try BER.parse(Array(receipt))
-      self.receipt = berReceipt
+      self.receipt = try container.decode(Data.self, forKey: .receipt)
     }
   }
 }

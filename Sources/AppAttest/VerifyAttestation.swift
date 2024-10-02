@@ -5,7 +5,7 @@ import SwiftASN1
 import X509
 
 extension AppAttest {
-  public func verifyAttestatin(
+  public func verifyAttestation(
     challenge: Data,
     keyId: Data,
     attestation: Data,
@@ -143,7 +143,7 @@ extension AppAttest {
     )
 
     switch result {
-    case .couldNotValidate(let failures):
+    case .couldNotValidate(_):
       throw AppAttestError.couldNotValidateCertificate
     case .validCertificate(let certificates):
       if Set(certificates)

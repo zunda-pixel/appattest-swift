@@ -9,7 +9,7 @@ extension AppAttest {
     payload: Data,
     certificate: X509.Certificate,  // credentialCertificate from db attestation
     counter: UInt32  // counter from db attestation
-  ) async throws {
+  ) throws {
     let assertion = try CBORDecoder.default.decode(Assertion.self, from: assertion)
 
     if assertion.authenticatorData.counter <= counter {

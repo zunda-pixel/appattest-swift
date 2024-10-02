@@ -59,9 +59,8 @@ extension AppAttest {
   ) throws {
     let clientDataHash = Data(SHA256.hash(data: challenge))
     let nonceData = Data(SHA256.hash(data: authenticateData.rawData + clientDataHash))
-    guard let ext = credetialCertificate.extensions.first(where: {
-      $0.oid == [1, 2, 840, 113635, 100, 8, 2]
-    }) else {
+    let ext = credetialCertificate.extensions.first { $0.oid == [1, 2, 840, 113635, 100, 8, 2] }
+    guard let ext else {
       throw AppAttestError.missingExtension
     }
     let der = try DER.parse(ext.value)

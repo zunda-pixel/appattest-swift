@@ -59,11 +59,15 @@ extension AppAttest {
   ) throws {
     let clientDataHash = Data(SHA256.hash(data: challenge))
     let nonceData = Data(SHA256.hash(data: authenticateData.rawData + clientDataHash))
-    let ext = credetialCertificate.extensions.first(where: { $0.oid == [1, 2, 840, 113635, 100, 8, 2]})!
+    guard let ext = credetialCertificate.extensions.first(where: {
+      $0.oid == [1, 2, 840, 113635, 100, 8, 2]
+    }) else {
+      throw AppAttestError.missingExtension
+    }
     let der = try DER.parse(ext.value)
-    let octet = try SingleOctetSequence(derEncoded: der)
+    let octet = try SingleOctetSequence(derEncoded: der.encodedBytes)
     if Data(octet.octet.bytes) != nonceData {
-      fatalError()
+      throw AppAttestError.invalidNonce
     }
   }
 

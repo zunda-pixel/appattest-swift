@@ -145,7 +145,7 @@ extension AppAttest {
       let allCertificates = [
         appleAppAttestationRootCa,
         credetialCertificate,
-        intermediateCertificateAuthority
+        intermediateCertificateAuthority,
       ]
       if Set(certificates) != Set(allCertificates) {
         throw VerifyAttentionError.failedValidateCertificate

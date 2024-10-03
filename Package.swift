@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-  name: "appattest-server-swift",
+  name: "appattest-swift",
   platforms: [
     .macOS(.v14),
     .iOS(.v17),

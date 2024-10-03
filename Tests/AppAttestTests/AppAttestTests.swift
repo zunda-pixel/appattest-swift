@@ -74,7 +74,7 @@ func serverCode(
 
 @Test
 func appAttest() async throws {
-  assert(DCAppAttestService.shared.isSupported)
+  #expect(DCAppAttestService.shared.isSupported)
 
   // Generate Challenge Value On Server
   let challeange = Data(AES.GCM.Nonce())

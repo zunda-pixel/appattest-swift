@@ -77,9 +77,9 @@ func appAttest() async throws {
   #expect(DCAppAttestService.shared.isSupported)
 
   // Generate Challenge Value On Server
-  let challeange = Data(AES.GCM.Nonce())
+  let challenge = Data(AES.GCM.Nonce())
   // Generate Attestation Assertion, BodyData on Client(iOS)
-  let (attestation, assertion, bodyData) = try await clientCode(challenge: challeange)
+  let (attestation, assertion, bodyData) = try await clientCode(challenge: challenge)
   // Verify Data on Server
   try await serverCode(
     attestation: attestation,

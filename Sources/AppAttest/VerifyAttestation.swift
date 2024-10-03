@@ -70,7 +70,6 @@ extension AppAttest {
     }
   }
 
-  // Complete
   private func verifyRelyingParty(
     authenticatorData: Attestation.AuthenticatorData
   ) throws {
@@ -80,7 +79,6 @@ extension AppAttest {
     }
   }
 
-  // Complete
   static private func verifyCredentialId(
     keyId: Data,
     authenticatorData: Attestation.AuthenticatorData
@@ -94,7 +92,6 @@ extension AppAttest {
     }
   }
 
-  // Complete
   static private func verifyKeyId(
     keyId: Data,
     credetialCertificate: X509.Certificate
@@ -114,7 +111,6 @@ extension AppAttest {
     }
   }
 
-  // Complete
   static private func verifyCertificates(
     credetialCertificate: Certificate,
     intermediateCertificateAuthority: Certificate

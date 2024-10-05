@@ -1,5 +1,4 @@
 import DeviceCheck
-import Valet
 import HTTPTypes
 import HTTPTypesFoundation
 import CryptoKit
@@ -43,24 +42,9 @@ enum Client {
     
     return response.challenge
   }
-  
-  static private func keyId() async throws -> String {
-    let valet = Valet.valet(
-      with: .init(nonEmpty: "AppAttestExample")!,
-      accessibility: .whenUnlocked
-    )
-    
-    if try valet.containsObject(forKey: "keyId") {
-      return try valet.string(forKey: "keyId")
-    } else {
-      let keyId = try await DCAppAttestService.shared.generateKey()
-      try valet.setString(keyId, forKey: "keyId")
-      return keyId
-    }
-  }
-  
+
   static private func prepareData(body: Data) async throws -> Payload {
-    let keyId = try await keyId()
+    let keyId = try await DCAppAttestService.shared.generateKey()
     let challenge = try await getChallenge()
     
     let attestation = try await DCAppAttestService.shared.attestKey(

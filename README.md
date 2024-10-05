@@ -65,16 +65,16 @@ func verifyAndHandleBody(
 
   let appAttest = AppAttest(
     teamId: teamId,
-    bundleId: bundleId
+    bundleId: bundleId,
+    environment: .development
   )
 
   let body = try JSONDecoder().decode(Body.self, from: bodyData)
 
   let attestatin = try await appAttest.verifyAttestation(
     challenge: body.challenge,
-    keyId: Data(body.keyId.utf8),
-    attestation: attestation,
-    environment: .development
+    keyId: body.keyId,
+    attestation: attestation
   )
 
   try appAttest.verifyAsssertion(

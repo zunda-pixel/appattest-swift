@@ -64,7 +64,9 @@ router.post("createUser") {
 
 let app = Application(
   router: router,
-  configuration: .init(address: .hostname("0.0.0.0", port: 8080))
+  configuration: .init(
+    address: .hostname("0.0.0.0", port: 8080)
+  )
 )
 
 try await app.runService()

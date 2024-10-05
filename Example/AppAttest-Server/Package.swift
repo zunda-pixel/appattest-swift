@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-  name: "Server",
+  name: "AppAttest-Server",
   platforms: [
     .macOS(.v14)
   ],

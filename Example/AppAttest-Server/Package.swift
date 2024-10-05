@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-  name: "Server",
+  name: "AppAttest-Server",
   platforms: [
     .macOS(.v14)
   ],
@@ -19,6 +19,6 @@ let package = Package(
         .product(name: "Hummingbird", package: "hummingbird"),
         .product(name: "AppAttest", package: "appattest-swift"),
       ]
-    ),
+    )
   ]
 )

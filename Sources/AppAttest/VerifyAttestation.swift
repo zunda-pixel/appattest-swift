@@ -7,7 +7,7 @@ import X509
 extension AppAttest {
   public func verifyAttestation(
     challenge: Data,
-    keyId: Data,
+    keyId: String,
     attestation: Data,
     environment: Environment
   ) async throws -> Attestation {
@@ -80,10 +80,10 @@ extension AppAttest {
   }
 
   static private func verifyCredentialId(
-    keyId: Data,
+    keyId: String,
     authenticatorData: Attestation.AuthenticatorData
   ) throws {
-    guard let keyId = String(decoding: keyId, as: UTF8.self).base64Decoded() else {
+    guard let keyId = keyId.base64Decoded() else {
       throw VerifyAttentionError.invalidKeyId
     }
 
@@ -93,7 +93,7 @@ extension AppAttest {
   }
 
   static private func verifyKeyId(
-    keyId: Data,
+    keyId: String,
     credetialCertificate: X509.Certificate
   ) throws {
     guard let publicKey = P256.Signing.PublicKey(credetialCertificate.publicKey) else {
@@ -102,7 +102,7 @@ extension AppAttest {
 
     let hashedPublicKey = Data(SHA256.hash(data: publicKey.x963Representation))
 
-    guard let keyId = String(decoding: keyId, as: UTF8.self).base64Decoded() else {
+    guard let keyId = keyId.base64Decoded() else {
       throw VerifyAttentionError.invalidKeyId
     }
 

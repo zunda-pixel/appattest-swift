@@ -59,7 +59,7 @@ func serverCode(
 
   let attestatin = try await appAttest.verifyAttestation(
     challenge: body.challenge,
-    keyId: Data(body.keyId.utf8),
+    keyId: body.keyId,
     attestation: attestation,
     environment: .development
   )

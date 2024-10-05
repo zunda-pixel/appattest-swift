@@ -53,7 +53,9 @@ enum Client {
     if try valet.containsObject(forKey: "keyId") {
       return try valet.string(forKey: "keyId")
     } else {
-      return try await DCAppAttestService.shared.generateKey()
+      let keyId = try await DCAppAttestService.shared.generateKey()
+      try valet.setString(keyId, forKey: "keyId")
+      return keyId
     }
   }
   

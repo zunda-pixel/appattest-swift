@@ -1,7 +1,7 @@
-import Hummingbird
-import Foundation
-import Crypto
 import AppAttest
+import Crypto
+import Foundation
+import Hummingbird
 
 let appAttest = AppAttest(
   teamId: <#TEAM_ID#>,
@@ -17,7 +17,7 @@ router.get("challenge") { _, _ -> ByteBuffer in
   }
   let body = Body(challenge: challenge)
   let bodyData = try JSONEncoder().encode(body)
-  
+
   return ByteBuffer(data: bodyData)
 }
 
@@ -36,29 +36,29 @@ router.post("createUser") {
     as: Payload.self,
     context: context
   )
-  
+
   let attestation = try await appAttest.verifyAttestation(
     challenge: payload.challenge,
     keyId: payload.keyId,
     attestation: payload.attestaion
   )
-  
+
   try appAttest.verifyAsssertion(
     assertion: payload.assertion,
     payload: payload.body,
     certificate: attestation.statement.credetialCertificate,
     counter: attestation.authenticatorData.counter
   )
-  
+
   struct Body: Codable {
     let name: String
     let age: Int
   }
-  
+
   let body = try JSONDecoder().decode(Body.self, from: payload.body)
-  
+
   print(body)
-  
+
   return ByteBuffer(data: payload.body)
 }
 

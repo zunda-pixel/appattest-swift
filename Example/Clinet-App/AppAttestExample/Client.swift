@@ -1,7 +1,7 @@
+import CryptoKit
 import DeviceCheck
 import HTTPTypes
 import HTTPTypesFoundation
-import CryptoKit
 
 let baseUrl: URL = URL(string: <#BASE_URL#>)!
 
@@ -14,11 +14,11 @@ enum Client {
       method: .post,
       url: url
     )
-    
+
     let payload = try await prepareData(body: body)
-    
+
     let payloadData = try JSONEncoder().encode(payload)
-    
+
     return try await URLSession.shared.upload(
       for: request,
       from: payloadData
@@ -31,32 +31,32 @@ enum Client {
       method: .get,
       url: url
     )
-    
+
     let (data, _) = try await URLSession.shared.data(for: request)
-    
+
     struct Response: Codable {
       let challenge: Data
     }
-    
+
     let response = try JSONDecoder().decode(Response.self, from: data)
-    
+
     return response.challenge
   }
 
   static private func prepareData(body: Data) async throws -> Payload {
     let keyId = try await DCAppAttestService.shared.generateKey()
     let challenge = try await getChallenge()
-    
+
     let attestation = try await DCAppAttestService.shared.attestKey(
       keyId,
       clientDataHash: Data(SHA256.hash(data: challenge))
     )
-        
+
     let assertion = try await DCAppAttestService.shared.generateAssertion(
       keyId,
       clientDataHash: Data(SHA256.hash(data: body))
     )
-    
+
     return Payload(
       challenge: challenge,
       keyId: keyId,

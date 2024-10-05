@@ -5,6 +5,7 @@ import Testing
 struct Request {
   var teamId: String
   var bundleId: String
+  var environment: Environment
   var challenge: Data
   var keyId: String
   var attestation: Data
@@ -14,6 +15,7 @@ struct Request {
   init(
     teamId: String,
     bundleId: String,
+    environment: Environment,
     challenge: String,
     keyId: String,
     attestation: String,
@@ -22,6 +24,7 @@ struct Request {
   ) {
     self.teamId = teamId
     self.bundleId = bundleId
+    self.environment = environment
     self.challenge = Data(base64Encoded: challenge)!
     self.keyId = keyId
     self.attestation = Data(base64Encoded: attestation)!
@@ -33,14 +36,14 @@ struct Request {
 func verifyAttestationAndAssersion(request: Request) async throws {
   let appAttest = AppAttest(
     teamId: request.teamId,
-    bundleId: request.bundleId
+    bundleId: request.bundleId,
+    environment: request.environment
   )
   
   let attestatin = try await appAttest.verifyAttestation(
     challenge: request.challenge,
     keyId: request.keyId,
-    attestation: request.attestation,
-    environment: .development
+    attestation: request.attestation
   )
 
   try appAttest.verifyAsssertion(

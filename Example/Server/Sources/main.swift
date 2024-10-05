@@ -5,7 +5,8 @@ import AppAttest
 
 let appAttest = AppAttest(
   teamId: <#TEAM_ID#>,
-  bundleId: <#BUNDLE_ID#>
+  bundleId: <#BUNDLE_ID#>,
+  environment: .development
 )
 let router = Router()
 
@@ -38,9 +39,8 @@ router.post("createUser") {
   
   let attestation = try await appAttest.verifyAttestation(
     challenge: payload.challenge,
-    keyId: Data(payload.keyId.utf8),
-    attestation: payload.attestaion,
-    environment: .development
+    keyId: payload.keyId,
+    attestation: payload.attestaion
   )
   
   try appAttest.verifyAsssertion(
@@ -64,7 +64,9 @@ router.post("createUser") {
 
 let app = Application(
   router: router,
-  configuration: .init(address: .hostname("0.0.0.0", port: 8080))
+  configuration: .init(
+    address: .hostname("0.0.0.0", port: 8080)
+  )
 )
 
 try await app.runService()

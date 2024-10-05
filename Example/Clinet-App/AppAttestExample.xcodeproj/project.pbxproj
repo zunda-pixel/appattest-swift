@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2EA55DA92CAEE6A70017B014 /* Valet in Frameworks */ = {isa = PBXBuildFile; productRef = 2EA55DA82CAEE6A70017B014 /* Valet */; };
 		2EA55DAC2CAEE8480017B014 /* HTTPTypes in Frameworks */ = {isa = PBXBuildFile; productRef = 2EA55DAB2CAEE8480017B014 /* HTTPTypes */; };
 		2EA55DAE2CAEE8480017B014 /* HTTPTypesFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 2EA55DAD2CAEE8480017B014 /* HTTPTypesFoundation */; };
 /* End PBXBuildFile section */
@@ -47,7 +46,6 @@
 			files = (
 				2EA55DAC2CAEE8480017B014 /* HTTPTypes in Frameworks */,
 				2EA55DAE2CAEE8480017B014 /* HTTPTypesFoundation in Frameworks */,
-				2EA55DA92CAEE6A70017B014 /* Valet in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,7 +97,6 @@
 			);
 			name = AppAttestExample;
 			packageProductDependencies = (
-				2EA55DA82CAEE6A70017B014 /* Valet */,
 				2EA55DAB2CAEE8480017B014 /* HTTPTypes */,
 				2EA55DAD2CAEE8480017B014 /* HTTPTypesFoundation */,
 			);
@@ -159,7 +156,6 @@
 			mainGroup = 2EA55D642CAEE35C0017B014;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				2EA55DA72CAEE6A70017B014 /* XCRemoteSwiftPackageReference "Valet" */,
 				2EA55DAA2CAEE8480017B014 /* XCRemoteSwiftPackageReference "swift-http-types" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -468,14 +464,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		2EA55DA72CAEE6A70017B014 /* XCRemoteSwiftPackageReference "Valet" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/square/Valet.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.3.0;
-			};
-		};
 		2EA55DAA2CAEE8480017B014 /* XCRemoteSwiftPackageReference "swift-http-types" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-http-types";
@@ -487,11 +475,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		2EA55DA82CAEE6A70017B014 /* Valet */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2EA55DA72CAEE6A70017B014 /* XCRemoteSwiftPackageReference "Valet" */;
-			productName = Valet;
-		};
 		2EA55DAB2CAEE8480017B014 /* HTTPTypes */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2EA55DAA2CAEE8480017B014 /* XCRemoteSwiftPackageReference "swift-http-types" */;

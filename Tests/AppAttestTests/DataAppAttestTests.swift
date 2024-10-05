@@ -38,7 +38,7 @@ func verifyAttestationAndAssersion(request: Request) async throws {
   
   let attestatin = try await appAttest.verifyAttestation(
     challenge: request.challenge,
-    keyId: Data(request.keyId.utf8),
+    keyId: request.keyId,
     attestation: request.attestation,
     environment: .development
   )

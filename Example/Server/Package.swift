@@ -10,7 +10,7 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/hummingbird-project/hummingbird", from: "2.0.1"),
-    .package(url: "https://github.com/zunda-pixel/appattest-swift", from: "0.0.2"),
+    .package(name: "appattest-swift", path: "../../../appattest-swift"),
   ],
   targets: [
     .executableTarget(

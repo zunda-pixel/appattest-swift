@@ -1,15 +1,6 @@
 {
-  "originHash" : "1b41537b5ec220d3c5768fef6c16ca9e9b700a26078e0ea39422c2768bce70f8",
+  "originHash" : "39cf90cf2921858d8d83b3a000c1b6208bc5c903df291f54c90bebb44352d10b",
   "pins" : [
-    {
-      "identity" : "appattest-swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/zunda-pixel/appattest-swift",
-      "state" : {
-        "revision" : "8dab7bff1da20c28c737a39cf731bfbdf45d9a1b",
-        "version" : "0.0.2"
-      }
-    },
     {
       "identity" : "async-http-client",
       "kind" : "remoteSourceControl",

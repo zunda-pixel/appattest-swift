@@ -52,7 +52,8 @@ func serverCode(
 
   let appAttest = AppAttest(
     teamId: teamId,
-    bundleId: bundleId
+    bundleId: bundleId,
+    environment: .development
   )
 
   let body = try JSONDecoder().decode(Body.self, from: bodyData)
@@ -60,8 +61,7 @@ func serverCode(
   let attestatin = try await appAttest.verifyAttestation(
     challenge: body.challenge,
     keyId: body.keyId,
-    attestation: attestation,
-    environment: .development
+    attestation: attestation
   )
 
   try appAttest.verifyAsssertion(

@@ -8,15 +8,14 @@ extension AppAttest {
   public func verifyAttestation(
     challenge: Data,
     keyId: String,
-    attestation: Data,
-    environment: Environment
+    attestation: Data
   ) async throws -> Attestation {
     let attestation = try CBORDecoder.default.decode(Attestation.self, from: attestation)
 
     guard attestation.format == "apple-appattest" else {
       throw VerifyAttentionError.invalidFormat
     }
-    guard attestation.authenticatorData.environment == environment else {
+    guard attestation.authenticatorData.environment == self.environment else {
       throw VerifyAttentionError.invalidAaguid
     }
 

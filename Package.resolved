@@ -1,5 +1,5 @@
 {
-  "originHash" : "da25d82bd8366126b73ef7b7a98712c6fe7264bb28a7c5c6d0c01f5c80311066",
+  "originHash" : "f1da2a3f662e3eefa93ace7b2db2ce391b4799fabc8006f447dfe496b0320131",
   "pins" : [
     {
       "identity" : "bigint",
@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-certificates",
       "state" : {
-        "revision" : "2f797305c1b5b982acaa6005d8a9f970cc4e97ff",
-        "version" : "1.5.0"
+        "revision" : "1fbb6ef21f1525ed5faf4c95207b9c11bea27e94",
+        "version" : "1.6.1"
       }
     },
     {

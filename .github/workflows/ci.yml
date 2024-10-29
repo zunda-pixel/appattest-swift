@@ -9,3 +9,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - run: swift build
+  lint:
+    runs-on: ubuntu-latest
+    container: swift:latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift format lint -r -p -s .

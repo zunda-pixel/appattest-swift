@@ -11,7 +11,7 @@ struct Request {
   var attestation: Data
   var assertion: Data
   var bodyData: Data
-  
+
   init(
     teamId: String,
     bundleId: String,
@@ -39,7 +39,7 @@ func verifyAttestationAndAssersion(request: Request) async throws {
     bundleId: request.bundleId,
     environment: request.environment
   )
-  
+
   let attestatin = try await appAttest.verifyAttestation(
     challenge: request.challenge,
     keyId: request.keyId,

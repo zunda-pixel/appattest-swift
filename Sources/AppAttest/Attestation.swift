@@ -44,13 +44,9 @@ extension Attestation {
       if let environment = Environment(bytes: dataEnvironment) {
         self.environment = environment
       } else {
-        throw DecodingError.typeMismatch(
-          Environment.self,
-          .init(
-            codingPath: [CodingKeys.environment],
-            debugDescription:
-              "value is not a valid AAGUID: \(String(decoding: dataEnvironment, as: UTF8.self))"
-          )
+        throw DecodingError.dataCorruptedError(
+          in: container,
+          debugDescription: "value is not a valid AAGUID: \(String(decoding: dataEnvironment, as: UTF8.self))"
         )
       }
 

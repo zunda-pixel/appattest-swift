@@ -116,7 +116,7 @@ struct App {
       challenge: body.challenge
     )
     
-    let attestatin = try await appAttest.verifyAttestation(
+    let attestation = try await appAttest.verifyAttestation(
       challenge: body.challenge,
       keyId: body.keyId,
       attestation: attestation
@@ -125,8 +125,8 @@ struct App {
     try appAttest.verifyAsssertion(
       assertion: assertion,
       payload: bodyData,
-      certificate: attestatin.statement.credetialCertificate,
-      counter: attestatin.authenticatorData.counter
+      certificate: attestation.statement.credetialCertificate,
+      counter: attestation.authenticatorData.counter
     )
     
     print(body.name)

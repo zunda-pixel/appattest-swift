@@ -19,7 +19,7 @@ struct App {
     let challenge = Challenge(
       userId: userId,
       sessionId: sessionId,
-      expiredAt: Date.now.addingTimeInterval(5 * 60), // expired after 5 minites.
+      expiredAt: Date.now.addingTimeInterval(5 * 60), // expired after 5 minutes.
       value: Data(AES.GCM.Nonce())
     )
 

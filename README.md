@@ -23,8 +23,7 @@ struct App {
       value: Data(AES.GCM.Nonce())
     )
 
-    challenges.appned(challenge)
-
+    challenges.append(challenge)
     return challenge.value
   }
 }

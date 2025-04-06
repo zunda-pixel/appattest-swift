@@ -32,7 +32,7 @@ struct Challenge {
   var userId: UUID
   var sessionId: UUID
   var expiredAt: Data
-  var value: Data
+  var value: Date
 }
 ```
 
@@ -133,7 +133,7 @@ struct App {
     print(body.age)
   }
 
-  func verifyChallnge(userId: UUID, sessionId: UUID, challenge: Data) throws {
+  func verifyChallenge(userId: UUID, sessionId: UUID, challenge: Data) throws {
     guard let challenge = challenges.first { $0.userId == userId && $0.sessionId == sessionId && $0.value == challenge } else {
       throw AppAttestError.notFoundChallenge
     }

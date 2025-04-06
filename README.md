@@ -28,7 +28,7 @@ struct App {
   }
 }
 
-struct Challnge {
+struct Challenge {
   var userId: UUID
   var sessionId: UUID
   var expiredAt: Data

@@ -138,7 +138,7 @@ struct App {
       throw AppAttestError.notFoundChallenge
     }
 
-    guard challenge.expiredAt <= Date.now else {
+    guard Date.now <= challenge.expiredAt else {
       throw AppAttestError.challengeExpired
     }
 

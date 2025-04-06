@@ -31,8 +31,8 @@ struct App {
 struct Challenge {
   var userId: UUID
   var sessionId: UUID
-  var expiredAt: Data
-  var value: Date
+  var expiredAt: Date
+  var value: Data
 }
 ```
 
@@ -110,7 +110,7 @@ struct App {
   
     let body = try JSONDecoder().decode(Body.self, from: bodyData)
 
-    try verifyChallnge(
+    try verifyChallenge(
       userId: body.userId,
       sessionId: body.sessionId,
       challenge: body.challenge

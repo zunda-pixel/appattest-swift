@@ -40,7 +40,7 @@ func verifyAttestationAndAssertion(request: Request) async throws {
     environment: request.environment
   )
 
-  let attestatin = try await appAttest.verifyAttestation(
+  let attestation = try await appAttest.verifyAttestation(
     challenge: request.challenge,
     keyId: request.keyId,
     attestation: request.attestation
@@ -49,7 +49,7 @@ func verifyAttestationAndAssertion(request: Request) async throws {
   try appAttest.verifyAssertion(
     assertion: request.assertion,
     payload: request.bodyData,
-    certificate: attestatin.statement.credentialCertificate,
-    counter: attestatin.authenticatorData.counter
+    certificate: attestation.statement.credentialCertificate,
+    counter: attestation.authenticatorData.counter
   )
 }

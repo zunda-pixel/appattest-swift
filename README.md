@@ -91,10 +91,14 @@ import AppAttest
 import Foundation
 
 @main
-struct App {
+actor App {
   var challenges: [Challenge] = []
 
   func verifyAndHandleBody(
+    userId: UUID,
+    sessionId: UUID,
+    chellnge: Data,
+    keyId: String,
     attestation: Data,
     assertion: Data,
     bodyData: Data
@@ -111,14 +115,14 @@ struct App {
     let body = try JSONDecoder().decode(Body.self, from: bodyData)
 
     try verifyChallenge(
-      userId: body.userId,
-      sessionId: body.sessionId,
-      challenge: body.challenge
+      userId: userId,
+      sessionId: sessionId,
+      challengeData: challenge
     )
     
     let attestation = try await appAttest.verifyAttestation(
-      challenge: body.challenge,
-      keyId: body.keyId,
+      challenge: challenge,
+      keyId: keyId,
       attestation: attestation
     )
   
@@ -133,8 +137,8 @@ struct App {
     print(body.age)
   }
 
-  func verifyChallenge(userId: UUID, sessionId: UUID, challenge: Data) throws {
-    guard let challenge = challenges.first { $0.userId == userId && $0.sessionId == sessionId && $0.value == challenge } else {
+  func verifyChallenge(userId: UUID, sessionId: UUID, challengeData: Data) throws {
+    guard let challenge = challenges.first(where: { $0.userId == userId && $0.sessionId == sessionId && $0.value == challengeData }) else {
       throw AppAttestError.notFoundChallenge
     }
 
@@ -142,7 +146,7 @@ struct App {
       throw AppAttestError.challengeExpired
     }
 
-    challenges.removeAll  { $0.userId == userId && $0.sessionId == sessionId && $0.value == challenge }
+    challenges.removeAll { $0.userId == userId && $0.sessionId == sessionId && $0.value == challengeData }
   }
 }
 ```

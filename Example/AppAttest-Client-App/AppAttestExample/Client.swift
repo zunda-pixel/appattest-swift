@@ -6,7 +6,7 @@ import HTTPTypesFoundation
 let baseUrl: URL = URL(string: <#BASE_URL#>)!
 
 enum Client {
-  static func execute(
+  static func createUser(
     body: Data
   ) async throws -> (Data, HTTPResponse) {
     let url = baseUrl.appending(path: "createUser")
@@ -15,9 +15,13 @@ enum Client {
       url: url
     )
 
+    print("Preparing payload...")
+
     let payload = try await prepareData(body: body)
 
     let payloadData = try JSONEncoder().encode(payload)
+
+    print("Uploadig payload...")
 
     return try await URLSession.shared.upload(
       for: request,
@@ -25,8 +29,30 @@ enum Client {
     )
   }
 
-  static func getChallenge() async throws -> Data {
-    let url = baseUrl.appending(path: "challenge")
+  static func getUsers() async throws -> [User] {
+    let request = HTTPRequest(
+      method: .get,
+      url: baseUrl.appending(path: "users")
+    )
+
+    let (data, _) = try await URLSession.shared.data(
+      for: request
+    )
+
+    return try JSONDecoder().decode([User].self, from: data)
+  }
+
+  static func getChallenge(
+    userId: UUID,
+    sessionId: UUID
+  ) async throws -> Data {
+    let url =
+      baseUrl
+      .appending(path: "challenge")
+      .appending(queryItems: [
+        .init(name: "userId", value: userId.uuidString),
+        .init(name: "sessionId", value: sessionId.uuidString),
+      ])
     let request = HTTPRequest(
       method: .get,
       url: url
@@ -45,7 +71,15 @@ enum Client {
 
   static private func prepareData(body: Data) async throws -> Payload {
     let keyId = try await DCAppAttestService.shared.generateKey()
-    let challenge = try await getChallenge()
+    let userId = UUID()
+    let sessionId = UUID()
+
+    print("Request challenge userId: \(userId), sessionId: \(sessionId)")
+    let challenge = try await getChallenge(
+      userId: userId,
+      sessionId: sessionId
+    )
+    print("Recieved challnge: \(challenge.count) bytes")
 
     let attestation = try await DCAppAttestService.shared.attestKey(
       keyId,
@@ -58,6 +92,8 @@ enum Client {
     )
 
     return Payload(
+      userId: userId,
+      sessionId: sessionId,
       challenge: challenge,
       keyId: keyId,
       attestaion: attestation,
@@ -68,9 +104,11 @@ enum Client {
 }
 
 struct Payload: Encodable {
-  let challenge: Data
-  let keyId: String
-  let attestaion: Data
-  let assertion: Data
-  let body: Data
+  var userId: UUID
+  var sessionId: UUID
+  var challenge: Data
+  var keyId: String
+  var attestaion: Data
+  var assertion: Data
+  var body: Data
 }

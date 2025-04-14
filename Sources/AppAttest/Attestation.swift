@@ -46,7 +46,8 @@ extension Attestation {
       } else {
         throw DecodingError.dataCorruptedError(
           in: container,
-          debugDescription: "value is not a valid AAGUID: \(String(decoding: dataEnvironment, as: UTF8.self))"
+          debugDescription:
+            "value is not a valid AAGUID: \(String(decoding: dataEnvironment, as: UTF8.self))"
         )
       }
 

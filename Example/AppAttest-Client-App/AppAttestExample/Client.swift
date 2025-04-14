@@ -16,13 +16,13 @@ enum Client {
     )
 
     print("Preparing payload...")
-    
+
     let payload = try await prepareData(body: body)
 
     let payloadData = try JSONEncoder().encode(payload)
 
     print("Uploadig payload...")
-    
+
     return try await URLSession.shared.upload(
       for: request,
       from: payloadData
@@ -34,19 +34,20 @@ enum Client {
       method: .get,
       url: baseUrl.appending(path: "users")
     )
-    
+
     let (data, _) = try await URLSession.shared.data(
       for: request
     )
-    
+
     return try JSONDecoder().decode([User].self, from: data)
   }
-  
+
   static func getChallenge(
     userId: UUID,
     sessionId: UUID
   ) async throws -> Data {
-    let url = baseUrl
+    let url =
+      baseUrl
       .appending(path: "challenge")
       .appending(queryItems: [
         .init(name: "userId", value: userId.uuidString),
@@ -72,14 +73,14 @@ enum Client {
     let keyId = try await DCAppAttestService.shared.generateKey()
     let userId = UUID()
     let sessionId = UUID()
-    
+
     print("Request challenge userId: \(userId), sessionId: \(sessionId)")
     let challenge = try await getChallenge(
       userId: userId,
       sessionId: sessionId
     )
     print("Recieved challnge: \(challenge.count) bytes")
-    
+
     let attestation = try await DCAppAttestService.shared.attestKey(
       keyId,
       clientDataHash: Data(SHA256.hash(data: challenge))

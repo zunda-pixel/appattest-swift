@@ -32,7 +32,7 @@ actor App {
     router.get("challenge") { request, _ -> ByteBuffer in
       let userId = request.uri.queryParameters["userId"]!
       let sessionId = request.uri.queryParameters["sessionId"]!
-      
+
       let challenge = Challenge(
         userId: UUID(uuidString: String(userId))!,
         sessionId: UUID(uuidString: String(sessionId))!,
@@ -41,7 +41,7 @@ actor App {
       )
 
       challenges.append(challenge)
-      
+
       struct Body: Encodable {
         var challenge: Data
       }
@@ -72,7 +72,7 @@ actor App {
         sessionId: payload.sessionId,
         challengeData: payload.challenge
       )
-  
+
       let attestation = try await appAttest.verifyAttestation(
         challenge: payload.challenge,
         keyId: payload.keyId,
@@ -92,7 +92,7 @@ actor App {
 
       return ByteBuffer(data: payload.body)
     }
-    
+
     router.get("users") { _, _ -> ByteBuffer in
       let body = try JSONEncoder().encode(users)
       return ByteBuffer(data: body)
@@ -107,9 +107,13 @@ actor App {
 
     try await app.runService()
   }
-  
+
   static func verifyChallenge(userId: UUID, sessionId: UUID, challengeData: Data) throws {
-    guard let challenge = challenges.first(where: { $0.userId == userId && $0.sessionId == sessionId && $0.value == challengeData }) else {
+    guard
+      let challenge = challenges.first(where: {
+        $0.userId == userId && $0.sessionId == sessionId && $0.value == challengeData
+      })
+    else {
       throw AppAttestError.notFoundChallenge
     }
 
@@ -117,7 +121,9 @@ actor App {
       throw AppAttestError.challengeExpired
     }
 
-    challenges.removeAll { $0.userId == userId && $0.sessionId == sessionId && $0.value == challengeData }
+    challenges.removeAll {
+      $0.userId == userId && $0.sessionId == sessionId && $0.value == challengeData
+    }
   }
 }
 

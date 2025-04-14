@@ -10,7 +10,7 @@ struct ContentView: View {
   @State var response: String?
   @State var age: Int = 30
   @State var users: [User] = []
-  
+
   func sendData() async throws {
     let payload = User(name: "Hello World!", age: age)
 
@@ -29,7 +29,7 @@ struct ContentView: View {
     List {
       TextField("Age", value: $age, format: .number)
         .keyboardType(.decimalPad)
-      
+
       Section {
         Button("Create User") {
           Task {
@@ -59,7 +59,7 @@ struct ContentView: View {
           response = nil
         }
       }
-      
+
       Section {
         Button("Fetch Users") {
           Task {
@@ -67,7 +67,7 @@ struct ContentView: View {
           }
         }
       }
-      
+
       Section("Users") {
         ForEach(users, id: \.self) { user in
           Text("\(user.name), \(user.age)")

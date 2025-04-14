@@ -133,8 +133,8 @@ struct App {
     print(body.age)
   }
 
-  func verifyChallenge(userId: UUID, sessionId: UUID, challenge: Data) throws {
-    guard let challenge = challenges.first { $0.userId == userId && $0.sessionId == sessionId && $0.value == challenge } else {
+  func verifyChallenge(userId: UUID, sessionId: UUID, challengeData: Data) throws {
+    guard let challenge = challenges.first(where: { $0.userId == userId && $0.sessionId == sessionId && $0.value == challengeData }) else {
       throw AppAttestError.notFoundChallenge
     }
 
@@ -142,7 +142,7 @@ struct App {
       throw AppAttestError.challengeExpired
     }
 
-    challenges.removeAll  { $0.userId == userId && $0.sessionId == sessionId && $0.value == challenge }
+    challenges.removeAll { $0.userId == userId && $0.sessionId == sessionId && $0.value == challengeData }
   }
 }
 ```

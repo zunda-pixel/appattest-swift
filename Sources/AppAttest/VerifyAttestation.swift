@@ -24,13 +24,13 @@ extension AppAttest {
     }
 
     try await Self.verifyCertificates(
-      credetialCertificate: attestation.statement.credetialCertificate,
+      credentialCertificate: attestation.statement.credentialCertificate,
       intermediateCertificateAuthority: attestation.statement.intermediateCertificateAuthority
     )
 
     try Self.verifyKeyId(
       keyId: keyId,
-      credetialCertificate: attestation.statement.credetialCertificate
+      credentialCertificate: attestation.statement.credentialCertificate
     )
 
     try self.verifyRelyingParty(
@@ -44,7 +44,7 @@ extension AppAttest {
 
     try Self.verifyNonce(
       challenge: challenge,
-      credetialCertificate: attestation.statement.credetialCertificate,
+      credetialCertificate: attestation.statement.credentialCertificate,
       authenticateData: attestation.authenticatorData
     )
 
@@ -93,9 +93,9 @@ extension AppAttest {
 
   static private func verifyKeyId(
     keyId: String,
-    credetialCertificate: X509.Certificate
+    credentialCertificate: X509.Certificate
   ) throws {
-    guard let publicKey = P256.Signing.PublicKey(credetialCertificate.publicKey) else {
+    guard let publicKey = P256.Signing.PublicKey(credentialCertificate.publicKey) else {
       throw VerifyAttentionError.invalidPublicKey
     }
 
@@ -111,7 +111,7 @@ extension AppAttest {
   }
 
   static private func verifyCertificates(
-    credetialCertificate: Certificate,
+    credentialCertificate: Certificate,
     intermediateCertificateAuthority: Certificate
   ) async throws {
     let appleAppAttestationRootCa: X509.Certificate
@@ -133,7 +133,7 @@ extension AppAttest {
     }
 
     let result = await verifier.validate(
-      leafCertificate: credetialCertificate,
+      leafCertificate: credentialCertificate,
       intermediates: .init([intermediateCertificateAuthority])
     )
 
@@ -143,7 +143,7 @@ extension AppAttest {
     case .validCertificate(let certificates):
       let allCertificates = [
         appleAppAttestationRootCa,
-        credetialCertificate,
+        credentialCertificate,
         intermediateCertificateAuthority,
       ]
       if Set(certificates) != Set(allCertificates) {

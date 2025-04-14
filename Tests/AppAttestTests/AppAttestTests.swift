@@ -67,7 +67,7 @@ func serverCode(
   try appAttest.verifyAsssertion(
     assertion: assertion,
     payload: bodyData,
-    certificate: attestatin.statement.credetialCertificate,
+    certificate: attestatin.statement.credentialCertificate,
     counter: attestatin.authenticatorData.counter
   )
 }

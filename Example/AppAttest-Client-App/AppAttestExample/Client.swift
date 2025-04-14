@@ -96,7 +96,7 @@ enum Client {
       sessionId: sessionId,
       challenge: challenge,
       keyId: keyId,
-      attestaion: attestation,
+      attestation: attestation,
       assertion: assertion,
       body: body
     )
@@ -108,7 +108,7 @@ struct Payload: Encodable {
   var sessionId: UUID
   var challenge: Data
   var keyId: String
-  var attestaion: Data
+  var attestation: Data
   var assertion: Data
   var body: Data
 }

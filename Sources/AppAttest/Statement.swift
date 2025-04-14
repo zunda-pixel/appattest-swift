@@ -5,7 +5,7 @@ import X509
 extension Attestation {
   public struct Statement: Decodable, Sendable, Hashable {
     /// credCer
-    public var credetialCertificate: X509.Certificate
+    public var credentialCertificate: X509.Certificate
     /// intermediateCa(caCert)
     public var intermediateCertificateAuthority: X509.Certificate
     public var receipt: Data
@@ -24,7 +24,7 @@ extension Attestation {
         try X509.Certificate(derEncoded: Array($0))
       }
 
-      self.credetialCertificate = certificates.first!
+      self.credentialCertificate = certificates.first!
       self.intermediateCertificateAuthority = certificates.last!
 
       self.receipt = try container.decode(Data.self, forKey: .receipt)

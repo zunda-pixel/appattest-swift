@@ -139,7 +139,7 @@ actor App {
 
   func verifyChallenge(userId: UUID, sessionId: UUID, challengeData: Data) throws {
     guard let challenge = challenges.first(where: { $0.userId == userId && $0.sessionId == sessionId && $0.value == challengeData }) else {
-      throw AppAttestError.notFoundChallenge
+      throw AppAttestError.challengeNotFound
     }
 
     guard Date.now <= challenge.expiredAt else {

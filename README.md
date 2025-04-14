@@ -97,7 +97,7 @@ actor App {
   func verifyAndHandleBody(
     userId: UUID,
     sessionId: UUID,
-    chellnge: Data,
+    challenge: Data,
     keyId: String,
     attestation: Data,
     assertion: Data,
@@ -126,10 +126,10 @@ actor App {
       attestation: attestation
     )
   
-    try appAttest.verifyAsssertion(
+    try appAttest.verifyAssertion(
       assertion: assertion,
       payload: bodyData,
-      certificate: attestation.statement.credetialCertificate,
+      certificate: attestation.statement.credentialCertificate,
       counter: attestation.authenticatorData.counter
     )
     

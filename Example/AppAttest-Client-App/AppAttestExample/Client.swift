@@ -79,7 +79,7 @@ enum Client {
       userId: userId,
       sessionId: sessionId
     )
-    print("Recieved challnge: \(challenge.count) bytes")
+    print("Received challnge: \(challenge.count) bytes")
 
     let attestation = try await DCAppAttestService.shared.attestKey(
       keyId,

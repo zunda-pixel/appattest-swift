@@ -58,17 +58,17 @@ func serverCode(
 
   let body = try JSONDecoder().decode(Body.self, from: bodyData)
 
-  let attestatin = try await appAttest.verifyAttestation(
+  let attestation = try await appAttest.verifyAttestation(
     challenge: body.challenge,
     keyId: body.keyId,
     attestation: attestation
   )
 
-  try appAttest.verifyAsssertion(
+  try appAttest.verifyAssertion(
     assertion: assertion,
     payload: bodyData,
-    certificate: attestatin.statement.credentialCertificate,
-    counter: attestatin.authenticatorData.counter
+    certificate: attestation.statement.credentialCertificate,
+    counter: attestation.authenticatorData.counter
   )
 }
 

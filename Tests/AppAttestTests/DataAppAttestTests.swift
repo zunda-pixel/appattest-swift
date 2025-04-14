@@ -33,7 +33,7 @@ struct Request {
   }
 }
 
-func verifyAttestationAndAssersion(request: Request) async throws {
+func verifyAttestationAndAssertion(request: Request) async throws {
   let appAttest = AppAttest(
     teamId: request.teamId,
     bundleId: request.bundleId,
@@ -46,10 +46,10 @@ func verifyAttestationAndAssersion(request: Request) async throws {
     attestation: request.attestation
   )
 
-  try appAttest.verifyAsssertion(
+  try appAttest.verifyAssertion(
     assertion: request.assertion,
     payload: request.bodyData,
-    certificate: attestatin.statement.credetialCertificate,
+    certificate: attestatin.statement.credentialCertificate,
     counter: attestatin.authenticatorData.counter
   )
 }

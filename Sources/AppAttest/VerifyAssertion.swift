@@ -4,7 +4,7 @@ import PotentCBOR
 import X509
 
 extension AppAttest {
-  public func verifyAsssertion(
+  public func verifyAssertion(
     assertion: Data,
     payload: Data,
     certificate: X509.Certificate,  // credentialCertificate from db attestation
@@ -21,21 +21,21 @@ extension AppAttest {
     )
 
     try Self.verifyNonce(
-      assetion: assertion,
+      assertion: assertion,
       payload: payload,
       certificate: certificate
     )
   }
 
   static private func verifyNonce(
-    assetion: Assertion,  // Client
+    assertion: Assertion,  // Client
     payload: Data,  // Client
     certificate: X509.Certificate  // Server
   ) throws {
     let clientDataHash = Data(SHA256.hash(data: payload))
-    let nonceData: Data = assetion.authenticatorData.rawData + clientDataHash
+    let nonceData: Data = assertion.authenticatorData.rawData + clientDataHash
     let nonce = Data(SHA256.hash(data: nonceData))
-    let signature = try P256.Signing.ECDSASignature(derRepresentation: assetion.signature)
+    let signature = try P256.Signing.ECDSASignature(derRepresentation: assertion.signature)
     guard let publicKey = P256.Signing.PublicKey(certificate.publicKey) else {
       throw VerifyAssertionError.invalidPublicKey
     }

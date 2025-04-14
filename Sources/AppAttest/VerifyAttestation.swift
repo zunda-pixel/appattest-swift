@@ -13,14 +13,14 @@ extension AppAttest {
     let attestation = try CBORDecoder.default.decode(Attestation.self, from: attestation)
 
     guard attestation.format == "apple-appattest" else {
-      throw VerifyAttentionError.invalidFormat
+      throw VerifyAttestationError.invalidFormat
     }
     guard attestation.authenticatorData.environment == self.environment else {
-      throw VerifyAttentionError.invalidAaguid
+      throw VerifyAttestationError.invalidAaguid
     }
 
     guard attestation.authenticatorData.counter == 0 else {
-      throw VerifyAttentionError.invalidCounter
+      throw VerifyAttestationError.invalidCounter
     }
 
     try await Self.verifyCertificates(
@@ -44,7 +44,7 @@ extension AppAttest {
 
     try Self.verifyNonce(
       challenge: challenge,
-      credetialCertificate: attestation.statement.credentialCertificate,
+      credentialCertificate: attestation.statement.credentialCertificate,
       authenticateData: attestation.authenticatorData
     )
 
@@ -53,19 +53,19 @@ extension AppAttest {
 
   static private func verifyNonce(
     challenge: Data,
-    credetialCertificate: X509.Certificate,
+    credentialCertificate: X509.Certificate,
     authenticateData: Attestation.AuthenticatorData
   ) throws {
     let clientDataHash = Data(SHA256.hash(data: challenge))
     let nonceData = Data(SHA256.hash(data: authenticateData.rawData + clientDataHash))
-    let ext = credetialCertificate.extensions.first { $0.oid == [1, 2, 840, 113635, 100, 8, 2] }
+    let ext = credentialCertificate.extensions.first { $0.oid == [1, 2, 840, 113635, 100, 8, 2] }
     guard let ext else {
-      throw VerifyAttentionError.missingExtension
+      throw VerifyAttestationError.missingExtension
     }
     let der = try DER.parse(ext.value)
     let octet = try SingleOctetSequence(derEncoded: der.encodedBytes)
     if Data(octet.octet.bytes) != nonceData {
-      throw VerifyAttentionError.invalidNonce
+      throw VerifyAttestationError.invalidNonce
     }
   }
 
@@ -74,7 +74,7 @@ extension AppAttest {
   ) throws {
     let appId = Data(SHA256.hash(data: Data("\(self.teamId).\(self.bundleId)".utf8)))
     if authenticatorData.relyingPartyId != appId {
-      throw VerifyAttentionError.invalidRelyingPartyID
+      throw VerifyAttestationError.invalidRelyingPartyID
     }
   }
 
@@ -83,11 +83,11 @@ extension AppAttest {
     authenticatorData: Attestation.AuthenticatorData
   ) throws {
     guard let keyId = keyId.base64Decoded() else {
-      throw VerifyAttentionError.invalidKeyId
+      throw VerifyAttestationError.invalidKeyId
     }
 
     if keyId != authenticatorData.credentialId {
-      throw VerifyAttentionError.invalidKeyId
+      throw VerifyAttestationError.invalidKeyId
     }
   }
 
@@ -96,17 +96,17 @@ extension AppAttest {
     credentialCertificate: X509.Certificate
   ) throws {
     guard let publicKey = P256.Signing.PublicKey(credentialCertificate.publicKey) else {
-      throw VerifyAttentionError.invalidPublicKey
+      throw VerifyAttestationError.invalidPublicKey
     }
 
     let hashedPublicKey = Data(SHA256.hash(data: publicKey.x963Representation))
 
     guard let keyId = keyId.base64Decoded() else {
-      throw VerifyAttentionError.invalidKeyId
+      throw VerifyAttestationError.invalidKeyId
     }
 
     if keyId != hashedPublicKey {
-      throw VerifyAttentionError.invalidKeyId
+      throw VerifyAttestationError.invalidKeyId
     }
   }
 
@@ -139,7 +139,7 @@ extension AppAttest {
 
     switch result {
     case .couldNotValidate(_):
-      throw VerifyAttentionError.couldNotValidateCertificate
+      throw VerifyAttestationError.couldNotValidateCertificate
     case .validCertificate(let certificates):
       let allCertificates = [
         appleAppAttestationRootCa,
@@ -147,7 +147,7 @@ extension AppAttest {
         intermediateCertificateAuthority,
       ]
       if Set(certificates) != Set(allCertificates) {
-        throw VerifyAttentionError.failedValidateCertificate
+        throw VerifyAttestationError.failedValidateCertificate
       }
     }
   }

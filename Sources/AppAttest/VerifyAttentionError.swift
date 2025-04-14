@@ -1,4 +1,4 @@
-public enum VerifyAttentionError: Error {
+public enum VerifyAttestationError: Error {
   case invalidFormat
   case invalidAaguid
   case invalidRelyingPartyID

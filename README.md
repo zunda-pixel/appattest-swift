@@ -57,12 +57,8 @@ func sendData(
   )
 
   let body = Body(
-    userId: userId,
-    sessionId: sessionId,
     name: "sample name",
-    age: 25,
-    challenge: challenge,
-    keyId: keyId
+    age: 25
   )
 
   let bodyData = try JSONEncoder().encode(body)
@@ -71,16 +67,12 @@ func sendData(
     clientDataHash: Data(SHA256.hash(data: bodyData))
   )
 
-  return (attestation, assertion, bodyData)
+  return (userId, sessionId, challenge, keyId, attestation, assertion, bodyData)
 }
 
 struct Body: Codable {
-  let sessionId: UUID
-  let userId: UUID
   let name: String
   let age: Int
-  let challenge: Data
-  let keyId: String
 }
 ```
 

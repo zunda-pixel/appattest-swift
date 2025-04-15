@@ -4,13 +4,13 @@ on: pull_request
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     container: swift:latest
     steps:
     - uses: actions/checkout@v4
     - run: swift build
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     container: swift:latest
     steps:
       - uses: actions/checkout@v4

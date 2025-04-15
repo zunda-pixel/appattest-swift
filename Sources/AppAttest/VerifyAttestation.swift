@@ -173,8 +173,8 @@ extension String {
   func base64Decoded() -> Data? {
     var encoded =
       self
-      .replacingOccurrences(of: "-", with: "+")
-      .replacingOccurrences(of: "_", with: "/")
+      .replacing("-", with: "+")
+      .replacing("_", with: "/")
 
     // Swift requires padding, but other languages don't always
     while encoded.count % 4 != 0 {

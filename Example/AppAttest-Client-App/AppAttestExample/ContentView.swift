@@ -17,7 +17,7 @@ struct ContentView: View {
     let payloadData = try JSONEncoder().encode(payload)
     let (data, response) = try await Client.createUser(body: payloadData)
     if response.status == .ok {
-      print("Suceeded to send data!")
+      print("Succeeded to send data!")
       self.response = String(decoding: data, as: UTF8.self)
     } else {
       print(response.status)

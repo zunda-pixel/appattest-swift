@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/outfoxx/PotentCodables",
       "state" : {
-        "revision" : "660e33e84e00b9bf07bd41dd99ff800600e435e7",
-        "version" : "3.5.0"
+        "revision" : "1f46aa4840e27fcbbcf1ec7a238fcfaadd739abb",
+        "version" : "3.5.1"
       }
     },
     {

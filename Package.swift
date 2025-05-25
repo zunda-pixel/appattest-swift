@@ -16,7 +16,7 @@ let package = Package(
     )
   ],
   dependencies: [
-    .package(url: "https://github.com/outfoxx/PotentCodables", from: "3.5.0"),
+    .package(url: "https://github.com/outfoxx/PotentCodables", from: "3.5.1"),
     .package(url: "https://github.com/apple/swift-certificates", from: "1.5.0"),
   ],
   targets: [

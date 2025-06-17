@@ -1,5 +1,5 @@
 {
-  "originHash" : "f1da2a3f662e3eefa93ace7b2db2ce391b4799fabc8006f447dfe496b0320131",
+  "originHash" : "59a18d55501ba974c2b9e328d5c3782918bb24e9fb65a7b1adb5ace1f0e1c030",
   "pins" : [
     {
       "identity" : "bigint",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/outfoxx/PotentCodables",
       "state" : {
-        "revision" : "1f46aa4840e27fcbbcf1ec7a238fcfaadd739abb",
-        "version" : "3.5.1"
+        "revision" : "acfa8ee4108255c3f60ecfe11df75f70784a17da",
+        "version" : "3.5.2"
       }
     },
     {

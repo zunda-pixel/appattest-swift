@@ -1,8 +1,3 @@
-import Crypto
-import Foundation
-import PotentCBOR
-import X509
-
 public struct AppAttest: Sendable {
   public var appIDPrefix: String
   public var bundleId: String

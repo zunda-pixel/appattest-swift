@@ -86,29 +86,38 @@ enum Client {
       clientDataHash: Data(SHA256.hash(data: challenge))
     )
 
+    let clientData = AssertionClientData(
+      challenge: challenge,
+      keyId: keyId,
+      body: body
+    )
+    let clientDataBytes = try JSONEncoder().encode(clientData)
+
     let assertion = try await DCAppAttestService.shared.generateAssertion(
       keyId,
-      clientDataHash: Data(SHA256.hash(data: body))
+      clientDataHash: Data(SHA256.hash(data: clientDataBytes))
     )
 
     return Payload(
       userId: userId,
       sessionId: sessionId,
-      challenge: challenge,
-      keyId: keyId,
       attestation: attestation,
       assertion: assertion,
-      body: body
+      clientData: clientDataBytes
     )
   }
+}
+
+struct AssertionClientData: Encodable {
+  var challenge: Data
+  var keyId: String
+  var body: Data
 }
 
 struct Payload: Encodable {
   var userId: UUID
   var sessionId: UUID
-  var challenge: Data
-  var keyId: String
   var attestation: Data
   var assertion: Data
-  var body: Data
+  var clientData: Data
 }

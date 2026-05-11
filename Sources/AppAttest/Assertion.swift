@@ -8,7 +8,7 @@ public struct Assertion: Decodable, Sendable, Hashable {
 extension Assertion {
   public struct AuthenticatorData: Decodable, Sendable, Hashable {
     public let rawData: Data
-    /// "\(teamId).\(bundleId)"  SHA256 hash data
+    /// "\(appIDPrefix).\(bundleId)"  SHA256 hash data
     public let relyingPartyId: Data
     public let counter: UInt32
 

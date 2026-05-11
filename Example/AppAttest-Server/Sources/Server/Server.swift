@@ -23,7 +23,7 @@ actor App {
 
   static func main() async throws {
     let appAttest = AppAttest(
-      teamId: <#TEAM_ID#>,
+      appIDPrefix: <#APP_ID_PREFIX#>,
       bundleId: <#BUNDLE_ID#>,
       environment: .development
     )

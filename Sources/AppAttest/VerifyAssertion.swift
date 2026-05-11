@@ -47,7 +47,7 @@ extension AppAttest {
   }
 
   private func verifyRelyingPartyId(relyingPartyId: Data) throws {
-    let appIdHash = Data(SHA256.hash(data: Data("\(self.teamId).\(self.bundleId)".utf8)))
+    let appIdHash = Data(SHA256.hash(data: Data("\(self.appIDPrefix).\(self.bundleId)".utf8)))
     if relyingPartyId != appIdHash {
       throw VerifyAssertionError.invalidRelyingPartyID
     }

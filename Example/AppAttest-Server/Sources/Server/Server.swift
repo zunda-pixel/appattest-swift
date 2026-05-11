@@ -37,12 +37,18 @@ actor App {
     let router = Router()
 
     router.get("challenge") { request, _ -> ByteBuffer in
-      let userId = request.uri.queryParameters["userId"]!
-      let sessionId = request.uri.queryParameters["sessionId"]!
+      guard
+        let userIdValue = request.uri.queryParameters["userId"],
+        let sessionIdValue = request.uri.queryParameters["sessionId"],
+        let userId = UUID(uuidString: String(userIdValue)),
+        let sessionId = UUID(uuidString: String(sessionIdValue))
+      else {
+        throw HTTPError(.badRequest, message: "Invalid userId or sessionId")
+      }
 
       let challenge = Challenge(
-        userId: UUID(uuidString: String(userId))!,
-        sessionId: UUID(uuidString: String(sessionId))!,
+        userId: userId,
+        sessionId: sessionId,
         expiredAt: .now.addingTimeInterval(5 * 60),
         value: Data(AES.GCM.Nonce())
       )

@@ -22,7 +22,8 @@ extension Attestation {
         throw DecodingError.dataCorruptedError(
           forKey: .x5c,
           in: container,
-          debugDescription: "Attestation statement must contain credential and intermediate certificates."
+          debugDescription:
+            "Attestation statement must contain credential and intermediate certificates."
         )
       }
 

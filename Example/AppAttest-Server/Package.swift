@@ -9,7 +9,7 @@ let package = Package(
     .macOS(.v14)
   ],
   dependencies: [
-    .package(url: "https://github.com/hummingbird-project/hummingbird", from: "2.0.1"),
+    .package(url: "https://github.com/hummingbird-project/hummingbird.git", from: "2.0.1"),
     .package(name: "appattest-swift", path: "../../../appattest-swift"),
   ],
   targets: [

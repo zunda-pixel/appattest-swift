@@ -120,12 +120,13 @@ actor App {
       attestation: attestation
     )
   
-    try appAttest.verifyAssertion(
+    let assertion = try appAttest.verifyAssertion(
       assertion: assertion,
       payload: bodyData,
       certificate: attestation.statement.credentialCertificate,
       counter: attestation.authenticatorData.counter
     )
+    // Store assertion.authenticatorData.counter for the next assertion verification.
     
     print(body.name)
     print(body.age)

@@ -18,14 +18,20 @@ extension Attestation {
     public init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: CodingKeys.self)
       let x5cs = try container.decode([Data].self, forKey: .x5c)
-      assert(x5cs.count == 2)
+      guard x5cs.count == 2 else {
+        throw DecodingError.dataCorruptedError(
+          forKey: .x5c,
+          in: container,
+          debugDescription: "Attestation statement must contain credential and intermediate certificates."
+        )
+      }
 
       let certificates = try x5cs.map {
         try X509.Certificate(derEncoded: Array($0))
       }
 
-      self.credentialCertificate = certificates.first!
-      self.intermediateCertificateAuthority = certificates.last!
+      self.credentialCertificate = certificates[0]
+      self.intermediateCertificateAuthority = certificates[1]
 
       self.receipt = try container.decode(Data.self, forKey: .receipt)
     }

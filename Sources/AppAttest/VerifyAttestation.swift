@@ -160,7 +160,9 @@ private struct AppleAppAttestationCertificatePolicy: VerifierPolicy, Sendable {
     []
   }
 
-  mutating func chainMeetsPolicyRequirements(chain: UnverifiedCertificateChain) async -> PolicyEvaluationResult {
+  mutating func chainMeetsPolicyRequirements(
+    chain: UnverifiedCertificateChain
+  ) async -> PolicyEvaluationResult {
     let certificates = Array(chain)
     guard
       certificates.count == 3,

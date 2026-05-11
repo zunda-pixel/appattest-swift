@@ -17,9 +17,9 @@ struct Challenge {
 
 @main
 struct Server {
-    static func main() async throws {
-        try await App().run()
-    }
+  static func main() async throws {
+    try await App().run()
+  }
 }
 
 actor App {

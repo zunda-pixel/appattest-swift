@@ -5,8 +5,6 @@ import SwiftASN1
 import X509
 
 extension AppAttest {
-  private static let appAttestNonceExtensionOID: ASN1ObjectIdentifier = [1, 2, 840, 113635, 100, 8, 2]
-
   public func verifyAttestation(
     challenge: Data,
     keyId: String,
@@ -60,7 +58,7 @@ extension AppAttest {
   ) throws {
     let clientDataHash = Data(SHA256.hash(data: challenge))
     let nonceData = Data(SHA256.hash(data: authenticateData.rawData + clientDataHash))
-    guard let ext = credentialCertificate.extensions[oid: Self.appAttestNonceExtensionOID] else {
+    guard let ext = credentialCertificate.extensions[oid: .appAttestNonce] else {
       throw VerifyAttestationError.missingExtension
     }
     let octet = try SingleOctetSequence(derEncoded: ext.value)
@@ -136,16 +134,22 @@ extension AppAttest {
       )
     }
 
-    switch await verifier.validate(
+    let result = await verifier.validate(
       leaf: credentialCertificate,
       intermediates: .init([intermediateCertificateAuthority])
-    ) {
+    )
+
+    switch result {
     case .couldNotValidate:
       throw VerifyAttestationError.couldNotValidateCertificate
     case .validCertificate:
       break
     }
   }
+}
+
+extension ASN1ObjectIdentifier {
+  static let appAttestNonce: ASN1ObjectIdentifier = [1, 2, 840, 113635, 100, 8, 2]
 }
 
 private struct AppleAppAttestationCertificatePolicy: VerifierPolicy, Sendable {

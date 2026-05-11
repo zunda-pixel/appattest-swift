@@ -5,6 +5,8 @@ import SwiftASN1
 import X509
 
 extension AppAttest {
+  private static let appAttestNonceExtensionOID: ASN1ObjectIdentifier = [1, 2, 840, 113635, 100, 8, 2]
+
   public func verifyAttestation(
     challenge: Data,
     keyId: String,
@@ -58,12 +60,10 @@ extension AppAttest {
   ) throws {
     let clientDataHash = Data(SHA256.hash(data: challenge))
     let nonceData = Data(SHA256.hash(data: authenticateData.rawData + clientDataHash))
-    let ext = credentialCertificate.extensions.first { $0.oid == [1, 2, 840, 113635, 100, 8, 2] }
-    guard let ext else {
+    guard let ext = credentialCertificate.extensions[oid: Self.appAttestNonceExtensionOID] else {
       throw VerifyAttestationError.missingExtension
     }
-    let der = try DER.parse(ext.value)
-    let octet = try SingleOctetSequence(derEncoded: der.encodedBytes)
+    let octet = try SingleOctetSequence(derEncoded: ext.value)
     if Data(octet.octet.bytes) != nonceData {
       throw VerifyAttestationError.invalidNonce
     }
@@ -129,27 +129,44 @@ extension AppAttest {
     }
 
     var verifier = X509.Verifier(rootCertificates: .init([appleAppAttestationRootCa])) {
-      RFC5280Policy(validationTime: .now)
+      RFC5280Policy()
+      AppleAppAttestationCertificatePolicy(
+        intermediateCertificateAuthority: intermediateCertificateAuthority,
+        rootCertificate: appleAppAttestationRootCa
+      )
     }
 
-    let result = await verifier.validate(
-      leafCertificate: credentialCertificate,
+    switch await verifier.validate(
+      leaf: credentialCertificate,
       intermediates: .init([intermediateCertificateAuthority])
-    )
-
-    switch result {
-    case .couldNotValidate(_):
+    ) {
+    case .couldNotValidate:
       throw VerifyAttestationError.couldNotValidateCertificate
-    case .validCertificate(let certificates):
-      let allCertificates = [
-        appleAppAttestationRootCa,
-        credentialCertificate,
-        intermediateCertificateAuthority,
-      ]
-      if Set(certificates) != Set(allCertificates) {
-        throw VerifyAttestationError.failedValidateCertificate
-      }
+    case .validCertificate:
+      break
     }
+  }
+}
+
+private struct AppleAppAttestationCertificatePolicy: VerifierPolicy, Sendable {
+  var intermediateCertificateAuthority: Certificate
+  var rootCertificate: Certificate
+
+  var verifyingCriticalExtensions: [ASN1ObjectIdentifier] {
+    []
+  }
+
+  mutating func chainMeetsPolicyRequirements(chain: UnverifiedCertificateChain) async -> PolicyEvaluationResult {
+    let certificates = Array(chain)
+    guard
+      certificates.count == 3,
+      certificates[1] == intermediateCertificateAuthority,
+      certificates[2] == rootCertificate
+    else {
+      return .failsToMeetPolicy(reason: "Invalid Apple App Attestation certificate chain")
+    }
+
+    return .meetsPolicy
   }
 }
 

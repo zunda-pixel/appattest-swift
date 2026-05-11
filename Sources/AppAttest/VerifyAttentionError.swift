@@ -8,5 +8,4 @@ public enum VerifyAttestationError: Error {
   case invalidKeyId
   case missingExtension
   case couldNotValidateCertificate
-  case failedValidateCertificate
 }

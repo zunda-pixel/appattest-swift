@@ -8,7 +8,7 @@
 
 ```swift
 import Foundation
-import Crypt
+import Crypto
 
 @main
 struct App {

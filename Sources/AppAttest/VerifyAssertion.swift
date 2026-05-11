@@ -4,13 +4,12 @@ import PotentCBOR
 import X509
 
 extension AppAttest {
-  @discardableResult
   public func verifyAssertion(
     assertion: Data,
     payload: Data,
     certificate: X509.Certificate,  // credentialCertificate from db attestation
     counter: UInt32  // counter from db attestation
-  ) throws -> Assertion {
+  ) throws -> UInt32 {
     let assertion = try CBORDecoder.default.decode(Assertion.self, from: assertion)
 
     if assertion.authenticatorData.counter <= counter {
@@ -27,7 +26,7 @@ extension AppAttest {
       certificate: certificate
     )
 
-    return assertion
+    return assertion.authenticatorData.counter
   }
 
   static private func verifyNonce(

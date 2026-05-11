@@ -64,12 +64,13 @@ func serverCode(
     attestation: attestation
   )
 
-  try appAttest.verifyAssertion(
+  let counter = try appAttest.verifyAssertion(
     assertion: assertion,
     payload: bodyData,
     certificate: attestation.statement.credentialCertificate,
     counter: attestation.authenticatorData.counter
   )
+  _ = counter
 }
 
 @Test

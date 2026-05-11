@@ -45,13 +45,13 @@ func serverCode(
   assertion: Data,
   bodyData: Data
 ) async throws {
-  var teamId = Bundle.main.infoDictionary!["AppIdentifierPrefix"]! as! String  // "PU5HXZ4FZ2",
-  teamId.removeLast()
+  var appIDPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"]! as! String  // "PU5HXZ4FZ2",
+  appIDPrefix.removeLast()
 
   let bundleId = Bundle.main.bundleIdentifier!  //"com.zunda.TestAppAttest"
 
   let appAttest = AppAttest(
-    teamId: teamId,
+    appIDPrefix: appIDPrefix,
     bundleId: bundleId,
     environment: .development
   )

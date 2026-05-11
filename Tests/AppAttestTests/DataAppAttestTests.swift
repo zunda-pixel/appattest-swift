@@ -3,7 +3,7 @@ import Foundation
 import Testing
 
 struct Request {
-  var teamId: String
+  var appIDPrefix: String
   var bundleId: String
   var environment: Environment
   var challenge: Data
@@ -13,7 +13,7 @@ struct Request {
   var bodyData: Data
 
   init(
-    teamId: String,
+    appIDPrefix: String,
     bundleId: String,
     environment: Environment,
     challenge: String,
@@ -22,7 +22,7 @@ struct Request {
     assertion: String,
     bodyData: String
   ) {
-    self.teamId = teamId
+    self.appIDPrefix = appIDPrefix
     self.bundleId = bundleId
     self.environment = environment
     self.challenge = Data(base64Encoded: challenge)!
@@ -35,7 +35,7 @@ struct Request {
 
 func verifyAttestationAndAssertion(request: Request) async throws {
   let appAttest = AppAttest(
-    teamId: request.teamId,
+    appIDPrefix: request.appIDPrefix,
     bundleId: request.bundleId,
     environment: request.environment
   )

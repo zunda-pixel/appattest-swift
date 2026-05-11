@@ -98,11 +98,11 @@ actor App {
     assertion: Data,
     bodyData: Data
   ) async throws {
-    let teamId = ProcessInfo.processInfo.environment["TEAM_ID"]! // PH3HCZ4AK6
+    let appIDPrefix = ProcessInfo.processInfo.environment["APP_ID_PREFIX"]! // PH3HCZ4AK6
     let bundleId = ProcessInfo.processInfo.environment["BUNDLE_ID"]! // com.example.memo
   
     let appAttest = AppAttest(
-      teamId: teamId,
+      appIDPrefix: appIDPrefix,
       bundleId: bundleId,
       environment: .development
     )

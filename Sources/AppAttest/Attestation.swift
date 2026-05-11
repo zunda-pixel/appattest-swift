@@ -15,7 +15,7 @@ public struct Attestation: Decodable, Sendable, Hashable {
 extension Attestation {
   public struct AuthenticatorData: Decodable, Sendable, Hashable {
     public let rawData: Data
-    /// "\(teamId).\(bundleId)"  SHA256 hash data
+    /// "\(appIDPrefix).\(bundleId)"  SHA256 hash data
     public let relyingPartyId: Data
     public let counter: UInt32
     public let environment: Environment

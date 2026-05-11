@@ -55,10 +55,14 @@ actor App {
       struct Payload: Codable {
         let userId: UUID
         let sessionId: UUID
-        let challenge: Data
-        let keyId: String
         let attestation: Data
         let assertion: Data
+        let clientData: Data
+      }
+
+      struct AssertionClientData: Codable {
+        let challenge: Data
+        let keyId: String
         let body: Data
       }
 
@@ -66,31 +70,35 @@ actor App {
         as: Payload.self,
         context: context
       )
+      let clientData = try JSONDecoder().decode(
+        AssertionClientData.self,
+        from: payload.clientData
+      )
 
       try verifyChallenge(
         userId: payload.userId,
         sessionId: payload.sessionId,
-        challengeData: payload.challenge
+        challengeData: clientData.challenge
       )
 
       let attestation = try await appAttest.verifyAttestation(
-        challenge: payload.challenge,
-        keyId: payload.keyId,
+        challenge: clientData.challenge,
+        keyId: clientData.keyId,
         attestation: payload.attestation
       )
 
       try appAttest.verifyAssertion(
         assertion: payload.assertion,
-        payload: payload.body,
+        payload: payload.clientData,
         certificate: attestation.statement.credentialCertificate,
         counter: attestation.authenticatorData.counter
       )
 
-      let newUser = try JSONDecoder().decode(User.self, from: payload.body)
+      let newUser = try JSONDecoder().decode(User.self, from: clientData.body)
 
       users.append(newUser)
 
-      return ByteBuffer(data: payload.body)
+      return ByteBuffer(data: clientData.body)
     }
 
     router.get("users") { _, _ -> ByteBuffer in

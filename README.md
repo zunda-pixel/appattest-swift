@@ -58,7 +58,9 @@ func sendData(
 
   let body = Body(
     name: "sample name",
-    age: 25
+    age: 25,
+    challenge: challenge,
+    keyId: keyId
   )
 
   let bodyData = try JSONEncoder().encode(body)
@@ -67,12 +69,14 @@ func sendData(
     clientDataHash: Data(SHA256.hash(data: bodyData))
   )
 
-  return (userId, sessionId, challenge, keyId, attestation, assertion, bodyData)
+  return (userId, sessionId, attestation, assertion, bodyData)
 }
 
 struct Body: Codable {
   let name: String
   let age: Int
+  let challenge: Data
+  let keyId: String
 }
 ```
 
@@ -89,8 +93,6 @@ actor App {
   func verifyAndHandleBody(
     userId: UUID,
     sessionId: UUID,
-    challenge: Data,
-    keyId: String,
     attestation: Data,
     assertion: Data,
     bodyData: Data
@@ -109,12 +111,12 @@ actor App {
     try verifyChallenge(
       userId: userId,
       sessionId: sessionId,
-      challengeData: challenge
+      challengeData: body.challenge
     )
     
     let attestation = try await appAttest.verifyAttestation(
-      challenge: challenge,
-      keyId: keyId,
+      challenge: body.challenge,
+      keyId: body.keyId,
       attestation: attestation
     )
   

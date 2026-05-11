@@ -20,6 +20,12 @@ extension Assertion {
     public init(from decoder: any Decoder) throws {
       let container = try decoder.singleValueContainer()
       let data = try container.decode(Data.self)
+      guard data.count >= 37 else {
+        throw DecodingError.dataCorruptedError(
+          in: container,
+          debugDescription: "Authenticator data is too short."
+        )
+      }
       self.rawData = data
       // 32 bytes
       self.relyingPartyId = data[0..<32]

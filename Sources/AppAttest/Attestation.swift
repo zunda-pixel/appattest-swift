@@ -32,6 +32,12 @@ extension Attestation {
     public init(from decoder: any Decoder) throws {
       let container = try decoder.singleValueContainer()
       let data = try container.decode(Data.self)
+      guard data.count >= 55 else {
+        throw DecodingError.dataCorruptedError(
+          in: container,
+          debugDescription: "Authenticator data is too short."
+        )
+      }
       self.rawData = data
       // 32 bytes
       self.relyingPartyId = data[0..<32]
@@ -52,7 +58,16 @@ extension Attestation {
       }
 
       // 32 bytes KeyId
-      self.credentialId = data[55..<87]
+      let credentialIdLength = data[53..<55].reduce(0) { value, byte in
+        value << 8 | Int(byte)
+      }
+      guard credentialIdLength == 32, data.count >= 55 + credentialIdLength else {
+        throw DecodingError.dataCorruptedError(
+          in: container,
+          debugDescription: "Authenticator data has an invalid credential ID."
+        )
+      }
+      self.credentialId = data[55..<(55 + credentialIdLength)]
     }
   }
 }

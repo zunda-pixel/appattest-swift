@@ -88,14 +88,14 @@ actor App {
         attestation: payload.attestation
       )
 
-      let previousCounter = countersByKeyId[payload.keyId] ?? attestation.authenticatorData.counter
+      let previousCounter = countersByKeyId[clientData.keyId] ?? attestation.authenticatorData.counter
       let counter = try appAttest.verifyAssertion(
         assertion: payload.assertion,
         payload: payload.clientData,
         certificate: attestation.statement.credentialCertificate,
         counter: previousCounter
       )
-      countersByKeyId[payload.keyId] = counter
+      countersByKeyId[clientData.keyId] = counter
 
       let newUser = try JSONDecoder().decode(User.self, from: clientData.body)
 

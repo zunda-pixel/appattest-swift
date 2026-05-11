@@ -16,12 +16,18 @@ struct Challenge {
 }
 
 @main
-actor App {
-  static var users: [User] = []
-  static var challenges: [Challenge] = []
-  static var countersByKeyId: [String: UInt32] = [:]
+struct Server {
+    static func main() async throws {
+        try await App().run()
+    }
+}
 
-  static func main() async throws {
+actor App {
+  var users: [User] = []
+  var challenges: [Challenge] = []
+  var countersByKeyId: [String: UInt32] = [:]
+
+  func run() async throws {
     let appAttest = AppAttest(
       appIDPrefix: <#APP_ID_PREFIX#>,
       bundleId: <#BUNDLE_ID#>,
@@ -31,17 +37,23 @@ actor App {
     let router = Router()
 
     router.get("challenge") { request, _ -> ByteBuffer in
-      let userId = request.uri.queryParameters["userId"]!
-      let sessionId = request.uri.queryParameters["sessionId"]!
+      guard
+        let userIdValue = request.uri.queryParameters["userId"],
+        let sessionIdValue = request.uri.queryParameters["sessionId"],
+        let userId = UUID(uuidString: String(userIdValue)),
+        let sessionId = UUID(uuidString: String(sessionIdValue))
+      else {
+        throw HTTPError(.badRequest, message: "Invalid userId or sessionId")
+      }
 
       let challenge = Challenge(
-        userId: UUID(uuidString: String(userId))!,
-        sessionId: UUID(uuidString: String(sessionId))!,
+        userId: userId,
+        sessionId: sessionId,
         expiredAt: .now.addingTimeInterval(5 * 60),
         value: Data(AES.GCM.Nonce())
       )
 
-      challenges.append(challenge)
+      await self.appendChallenge(challenge)
 
       struct Body: Encodable {
         var challenge: Data
@@ -76,7 +88,7 @@ actor App {
         from: payload.clientData
       )
 
-      try verifyChallenge(
+      try await self.verifyChallenge(
         userId: payload.userId,
         sessionId: payload.sessionId,
         challengeData: clientData.challenge
@@ -88,24 +100,27 @@ actor App {
         attestation: payload.attestation
       )
 
-      let previousCounter =
-        countersByKeyId[clientData.keyId] ?? attestation.authenticatorData.counter
-      let counter = try appAttest.verifyAssertion(
-        assertion: payload.assertion,
-        payload: payload.clientData,
-        certificate: attestation.statement.credentialCertificate,
-        counter: previousCounter
-      )
-      countersByKeyId[clientData.keyId] = counter
+      try await self.verifyAssertionAndStoreCounter(
+        keyId: clientData.keyId,
+        defaultCounter: attestation.authenticatorData.counter
+      ) { previousCounter in
+        try appAttest.verifyAssertion(
+          assertion: payload.assertion,
+          payload: payload.clientData,
+          certificate: attestation.statement.credentialCertificate,
+          counter: previousCounter
+        )
+      }
 
       let newUser = try JSONDecoder().decode(User.self, from: clientData.body)
 
-      users.append(newUser)
+      await self.appendUser(newUser)
 
       return ByteBuffer(data: clientData.body)
     }
 
     router.get("users") { _, _ -> ByteBuffer in
+      let users = await self.allUsers()
       let body = try JSONEncoder().encode(users)
       return ByteBuffer(data: body)
     }
@@ -120,7 +135,7 @@ actor App {
     try await app.runService()
   }
 
-  static func verifyChallenge(userId: UUID, sessionId: UUID, challengeData: Data) throws {
+  func verifyChallenge(userId: UUID, sessionId: UUID, challengeData: Data) throws {
     guard
       let challenge = challenges.first(where: {
         $0.userId == userId && $0.sessionId == sessionId && $0.value == challengeData
@@ -136,6 +151,28 @@ actor App {
     challenges.removeAll {
       $0.userId == userId && $0.sessionId == sessionId && $0.value == challengeData
     }
+  }
+
+  func appendChallenge(_ challenge: Challenge) {
+    challenges.append(challenge)
+  }
+
+  func verifyAssertionAndStoreCounter(
+    keyId: String,
+    defaultCounter: UInt32,
+    verify: (UInt32) throws -> UInt32
+  ) rethrows {
+    let previousCounter = countersByKeyId[keyId] ?? defaultCounter
+    let counter = try verify(previousCounter)
+    countersByKeyId[keyId] = counter
+  }
+
+  func appendUser(_ user: User) {
+    users.append(user)
+  }
+
+  func allUsers() -> [User] {
+    users
   }
 }
 

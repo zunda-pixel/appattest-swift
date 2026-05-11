@@ -19,6 +19,7 @@ struct Challenge {
 actor App {
   static var users: [User] = []
   static var challenges: [Challenge] = []
+  static var countersByKeyId: [String: UInt32] = [:]
 
   static func main() async throws {
     let appAttest = AppAttest(
@@ -87,12 +88,14 @@ actor App {
         attestation: payload.attestation
       )
 
-      try appAttest.verifyAssertion(
+      let previousCounter = countersByKeyId[payload.keyId] ?? attestation.authenticatorData.counter
+      let counter = try appAttest.verifyAssertion(
         assertion: payload.assertion,
         payload: payload.clientData,
         certificate: attestation.statement.credentialCertificate,
-        counter: attestation.authenticatorData.counter
+        counter: previousCounter
       )
+      countersByKeyId[payload.keyId] = counter
 
       let newUser = try JSONDecoder().decode(User.self, from: clientData.body)
 

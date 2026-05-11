@@ -89,6 +89,7 @@ import Foundation
 @main
 actor App {
   var challenges: [Challenge] = []
+  var countersByKeyId: [String: UInt32] = [:]
 
   func verifyAndHandleBody(
     userId: UUID,
@@ -120,12 +121,14 @@ actor App {
       attestation: attestation
     )
   
-    try appAttest.verifyAssertion(
+    let previousCounter = countersByKeyId[keyId] ?? attestation.authenticatorData.counter
+    let counter = try appAttest.verifyAssertion(
       assertion: assertion,
       payload: bodyData,
       certificate: attestation.statement.credentialCertificate,
-      counter: attestation.authenticatorData.counter
+      counter: previousCounter
     )
+    countersByKeyId[keyId] = counter
     
     print(body.name)
     print(body.age)

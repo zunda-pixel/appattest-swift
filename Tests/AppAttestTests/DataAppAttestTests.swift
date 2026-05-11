@@ -46,10 +46,11 @@ func verifyAttestationAndAssertion(request: Request) async throws {
     attestation: request.attestation
   )
 
-  try appAttest.verifyAssertion(
+  let counter = try appAttest.verifyAssertion(
     assertion: request.assertion,
     payload: request.bodyData,
     certificate: attestation.statement.credentialCertificate,
     counter: attestation.authenticatorData.counter
   )
+  _ = counter
 }

@@ -9,7 +9,7 @@ extension AppAttest {
     payload: Data,
     certificate: X509.Certificate,  // credentialCertificate from db attestation
     counter: UInt32  // counter from db attestation
-  ) throws {
+  ) throws -> UInt32 {
     let assertion = try CBORDecoder.default.decode(Assertion.self, from: assertion)
 
     if assertion.authenticatorData.counter <= counter {
@@ -25,6 +25,8 @@ extension AppAttest {
       payload: payload,
       certificate: certificate
     )
+
+    return assertion.authenticatorData.counter
   }
 
   static private func verifyNonce(

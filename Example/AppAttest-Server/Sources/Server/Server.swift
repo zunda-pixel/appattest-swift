@@ -88,7 +88,8 @@ actor App {
         attestation: payload.attestation
       )
 
-      let previousCounter = countersByKeyId[clientData.keyId] ?? attestation.authenticatorData.counter
+      let previousCounter =
+        countersByKeyId[clientData.keyId] ?? attestation.authenticatorData.counter
       let counter = try appAttest.verifyAssertion(
         assertion: payload.assertion,
         payload: payload.clientData,

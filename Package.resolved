@@ -1,40 +1,13 @@
 {
-  "originHash" : "59a18d55501ba974c2b9e328d5c3782918bb24e9fb65a7b1adb5ace1f0e1c030",
+  "originHash" : "521362b8c3495ada0471a4b86e497b8c5bfc246c55d681115f2907e284716818",
   "pins" : [
     {
-      "identity" : "bigint",
+      "identity" : "cbor",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/attaswift/BigInt.git",
+      "location" : "https://github.com/edgeengineer/cbor",
       "state" : {
-        "revision" : "e07e00fa1fd435143a2dcf8b7eec9a7710b2fdfe",
-        "version" : "5.7.0"
-      }
-    },
-    {
-      "identity" : "float16",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SusanDoggie/Float16.git",
-      "state" : {
-        "revision" : "936ae66adccf1c91bcaeeb9c0cddde78a13695c3",
-        "version" : "1.1.1"
-      }
-    },
-    {
-      "identity" : "potentcodables",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/outfoxx/PotentCodables",
-      "state" : {
-        "revision" : "be0593a39fa3c8203dd10bdbad3803435517c100",
-        "version" : "3.5.3"
-      }
-    },
-    {
-      "identity" : "regex",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/sharplet/Regex.git",
-      "state" : {
-        "revision" : "76c2b73d4281d77fc3118391877efd1bf972f515",
-        "version" : "2.1.1"
+        "revision" : "a64323cc11eb8b4d7005dfd2feadacfd5f59f547",
+        "version" : "0.0.6"
       }
     },
     {
@@ -56,30 +29,12 @@
       }
     },
     {
-      "identity" : "swift-collections",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-collections.git",
-      "state" : {
-        "revision" : "03cc312c2c933ed87abace34044a5dff7a3117c1",
-        "version" : "1.5.0"
-      }
-    },
-    {
       "identity" : "swift-crypto",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-crypto.git",
       "state" : {
         "revision" : "1b6b2e274e85105bfa155183145a1dcfd63331f1",
         "version" : "4.5.0"
-      }
-    },
-    {
-      "identity" : "swift-numerics",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-numerics",
-      "state" : {
-        "revision" : "0c0290ff6b24942dadb83a929ffaaa1481df04a2",
-        "version" : "1.1.1"
       }
     }
   ],

@@ -1,6 +1,6 @@
+import CBOR
 import Crypto
 import Foundation
-import PotentCBOR
 import SwiftASN1
 import X509
 
@@ -10,7 +10,7 @@ extension AppAttest {
     keyId: String,
     attestation: Data
   ) async throws -> Attestation {
-    let attestation = try CBORDecoder.default.decode(Attestation.self, from: attestation)
+    let attestation = try CBORDecoder().decode(Attestation.self, from: [UInt8](attestation))
 
     guard attestation.format == "apple-appattest" else {
       throw VerifyAttestationError.invalidFormat

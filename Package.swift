@@ -16,14 +16,14 @@ let package = Package(
     )
   ],
   dependencies: [
-    .package(url: "https://github.com/outfoxx/PotentCodables", from: "3.5.1"),
+    .package(url: "https://github.com/edgeengineer/cbor", from: "0.0.6"),
     .package(url: "https://github.com/apple/swift-certificates", from: "1.19.0"),
   ],
   targets: [
     .target(
       name: "AppAttest",
       dependencies: [
-        .product(name: "PotentCodables", package: "PotentCodables"),
+        .product(name: "CBOR", package: "cbor"),
         .product(name: "X509", package: "swift-certificates"),
       ],
       resources: [

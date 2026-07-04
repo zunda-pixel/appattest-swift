@@ -1,15 +1,6 @@
 {
-  "originHash" : "521362b8c3495ada0471a4b86e497b8c5bfc246c55d681115f2907e284716818",
+  "originHash" : "94a1626247a4ca13030d4e953f2d21caa41092a0c7232f589b5f6171bc07089e",
   "pins" : [
-    {
-      "identity" : "cbor",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/edgeengineer/cbor",
-      "state" : {
-        "revision" : "a64323cc11eb8b4d7005dfd2feadacfd5f59f547",
-        "version" : "0.0.6"
-      }
-    },
     {
       "identity" : "swift-asn1",
       "kind" : "remoteSourceControl",
@@ -17,6 +8,15 @@
       "state" : {
         "revision" : "eb50cbd14606a9161cbc5d452f18797c90ef0bab",
         "version" : "1.7.0"
+      }
+    },
+    {
+      "identity" : "swift-cbor",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/brokenhandsio/swift-cbor",
+      "state" : {
+        "revision" : "96763b161e68a49638c27310aaba04253d7e2c66",
+        "version" : "0.0.1"
       }
     },
     {

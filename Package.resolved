@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/brokenhandsio/swift-cbor",
       "state" : {
-        "revision" : "e4395c1178e5deb43b2f638e5b5868b1744b9789",
-        "version" : "0.1.0"
+        "revision" : "52432a1118bcbabb9a973330c3af85d8ddf3f015",
+        "version" : "0.2.0"
       }
     },
     {

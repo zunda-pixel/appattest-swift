@@ -11,7 +11,7 @@ import CBOR
 ///
 /// https://developer.apple.com/documentation/devicecheck/attestation-object-validation-guide
 public struct ValidationCategory: RawRepresentable, Sendable, Hashable {
-  public let rawValue: UInt32
+  public var rawValue: UInt32
 
   public init(rawValue: UInt32) {
     self.rawValue = rawValue

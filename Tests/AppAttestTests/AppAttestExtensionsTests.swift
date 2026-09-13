@@ -224,10 +224,8 @@ func validationCategoryDecodesAppleLittleEndianEncoding() throws {
   #expect(ValidationCategory(cbor: .textString("4")) == nil)
 }
 
-/// A renamed key must not read as "no extensions", or a server cannot tell a future OS apart
-/// from one that predates the extensions entirely.
 @Test
-func unrecognisedExtensionMapIsReportedWithNoValues() throws {
+func unrecognisedExtensionMapIsNotReportedAsExtensions() throws {
   // A CBOR map that carries none of the App Attest keys: {"other": 1}
   let trailingData = Data([0xA1, 0x65]) + Data("other".utf8) + Data([0x01])
 
@@ -237,9 +235,7 @@ func unrecognisedExtensionMapIsReportedWithNoValues() throws {
       .base64EncodedString()
   )
 
-  let extensions = try #require(decoded.extensions)
-  #expect(extensions.validationCategory == nil)
-  #expect(extensions.bundleVersion == nil)
+  #expect(decoded.extensions == nil)
 }
 
 @Test

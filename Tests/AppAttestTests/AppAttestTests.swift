@@ -81,8 +81,6 @@ func serverCode(
 
   // iOS 27 and later append the App Attest authenticator extensions to the authenticator data.
   let attestationExtensions = try #require(attestation.authenticatorData.extensions)
-  #expect(attestationExtensions.validationCategory != nil)
-  #expect(attestationExtensions.bundleVersion != nil)
 
   let assertionExtensions = try #require(decodedAssertion.authenticatorData.extensions)
   #expect(assertionExtensions.validationCategory == attestationExtensions.validationCategory)

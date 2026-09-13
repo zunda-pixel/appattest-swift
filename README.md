@@ -150,7 +150,7 @@ actor App {
 
 ## 4. [Server] Read the iOS 27 authenticator extensions
 
-On iOS 27 and later, App Attest appends [authenticator extensions](https://developer.apple.com/documentation/devicecheck/attestation-object-validation-guide) to the authenticator data. They are exposed as `extensions`, which is `nil` whenever the authenticator data carries no readable extension map - every OS before iOS 27, but also any future map that renames or re-encodes either key. Treat the extensions as an additional signal rather than as a hard requirement.
+On iOS 27 and later, App Attest appends [authenticator extensions](https://developer.apple.com/documentation/devicecheck/attestation-object-validation-guide) to the authenticator data. They are exposed as `extensions`, which is `nil` whenever the authenticator data carries no extension map at all. A map whose keys this package does not recognise is reported with every property `nil`, so a future renaming reads as "nothing readable" rather than as an old device. Treat the extensions as an additional signal rather than as a hard requirement.
 
 ```swift
 let attestation = try await appAttest.verifyAttestation(
@@ -164,13 +164,16 @@ if let extensions = attestation.authenticatorData.extensions {
   switch extensions.validationCategory {
   case .appStore, .testFlight:
     break
+  case nil:
+    // The map carried no readable category; fall back to the other checks.
+    break
   default:
     // Development, enterprise, Developer ID, locally signed, ...
     throw AppAttestError.unexpectedValidationCategory
   }
 
   // `apple_bundle_version_01`: the bundle version of the running app.
-  print(extensions.bundleVersion)
+  print(extensions.bundleVersion ?? "unknown")
 }
 ```
 

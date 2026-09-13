@@ -8,21 +8,23 @@ import Foundation
 /// The extensions are therefore detected by the presence of trailing CBOR rather than by the
 /// flag.
 ///
-/// This is never a hard requirement: authenticator data that carries no readable extension
-/// map reports `nil` rather than failing the verification, which relies on `rawData` instead.
-/// A map is only reported when both keys read back, so a future OS that renames or re-encodes
-/// either of them reads as no extensions.
+/// Nothing here is ever a hard requirement. The whole value is `nil` only when the
+/// authenticator data carries no extension map at all, and an individual key that is missing
+/// or encoded in an unexpected way is reported as `nil` rather than failing the verification,
+/// which relies on `rawData` instead. A map whose keys this version does not recognise is
+/// therefore reported with every property `nil`, which says "extensions present, nothing
+/// readable" instead of masquerading as a device that predates them.
 ///
 /// https://developer.apple.com/documentation/devicecheck/attestation-object-validation-guide
 public struct AppAttestExtensions: Sendable, Hashable {
   /// The `apple_validation_category_01` extension: how the OS validated the running app.
-  public var validationCategory: ValidationCategory
+  public var validationCategory: ValidationCategory?
   /// The `apple_bundle_version_01` extension: the bundle version of the running app.
-  public var bundleVersion: String
+  public var bundleVersion: String?
 
   public init(
-    validationCategory: ValidationCategory,
-    bundleVersion: String
+    validationCategory: ValidationCategory?,
+    bundleVersion: String?
   ) {
     self.validationCategory = validationCategory
     self.bundleVersion = bundleVersion
@@ -34,16 +36,14 @@ extension AppAttestExtensions {
   static let bundleVersionKey = "apple_bundle_version_01"
 
   init?(cbor: CBOR) {
-    guard
-      case .map = cbor,
-      let validationCategory = cbor[Self.validationCategoryKey]
-        .flatMap(ValidationCategory.init(cbor:)),
-      let bundleVersion = cbor[Self.bundleVersionKey]?.string
-    else { return nil }
+    // The authenticator extension model puts a map here, so any map is one, recognised keys
+    // or not. Requiring a known key instead would report a future renaming as no extensions.
+    guard case .map = cbor else { return nil }
 
     self.init(
-      validationCategory: validationCategory,
-      bundleVersion: bundleVersion
+      validationCategory: cbor[Self.validationCategoryKey]
+        .flatMap(ValidationCategory.init(cbor:)),
+      bundleVersion: cbor[Self.bundleVersionKey]?.string
     )
   }
 

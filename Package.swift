@@ -32,7 +32,10 @@ let package = Package(
     ),
     .testTarget(
       name: "AppAttestTests",
-      dependencies: ["AppAttest"]
+      dependencies: [
+        "AppAttest",
+        .product(name: "CBOR", package: "swift-cbor"),
+      ]
     ),
   ]
 )

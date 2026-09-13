@@ -147,3 +147,35 @@ actor App {
   }
 }
 ```
+
+## 4. [Server] Read the iOS 27 authenticator extensions
+
+On iOS 27 and later, App Attest appends [authenticator extensions](https://developer.apple.com/documentation/devicecheck/attestation-object-validation-guide) to the authenticator data. They are exposed as `extensions`, and are `nil` on earlier OS versions, so use them as an additional signal rather than as a hard requirement.
+
+```swift
+let attestation = try await appAttest.verifyAttestation(
+  challenge: body.challenge,
+  keyId: body.keyId,
+  attestation: attestation
+)
+
+if let extensions = attestation.authenticatorData.extensions {
+  // `apple_validation_category_01`: how the OS validated the running app.
+  switch extensions.validationCategory {
+  case .appStore, .testFlight:
+    break
+  case .development:
+    throw AppAttestError.unexpectedValidationCategory
+  default:
+    break
+  }
+
+  // `apple_bundle_version_01`: the bundle version of the running app.
+  print(extensions.bundleVersion ?? "unknown")
+}
+```
+
+Assertions carry the same extensions on `Assertion.AuthenticatorData.extensions`.
+
+> [!NOTE]
+> The WebAuthn `ED` (extension data included) flag is not a reliable signal: iOS 27.0 sets it, while the sample in Apple's validation guide carries the extensions with it clear. The extensions are therefore detected by the trailing CBOR rather than by the flag. The full authenticator data is still kept in `rawData` and used for nonce and signature verification.

@@ -20,12 +20,16 @@ extension Attestation {
     public let counter: UInt32
     public let environment: Environment
     public let credentialId: Data
+    /// The authenticator extensions App Attest appends on iOS 27 and later, or `nil` on
+    /// earlier versions.
+    public let extensions: AppAttestExtensions?
 
     private enum CodingKeys: String, CodingKey {
       case replyingPartyId
       case counter
       case environment = "aaguid"
       case credentialId
+      case extensions
     }
 
     // https://developer.apple.com/documentation/devicecheck/validating-apps-that-connect-to-your-server#Verify-the-attestation
@@ -68,6 +72,13 @@ extension Attestation {
         )
       }
       self.credentialId = data[55..<(55 + credentialIdLength)]
+
+      // The credential public key follows the credential ID, and on iOS 27 and later the
+      // extension map follows that.
+      self.extensions = AppAttestExtensions(
+        trailingBytes: data[(55 + credentialIdLength)...],
+        skippedItems: 1
+      )
     }
   }
 }

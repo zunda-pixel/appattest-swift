@@ -11,10 +11,14 @@ extension Assertion {
     /// "\(appIDPrefix).\(bundleId)"  SHA256 hash data
     public let relyingPartyId: Data
     public let counter: UInt32
+    /// The authenticator extensions App Attest appends on iOS 27 and later, or `nil` on
+    /// earlier versions.
+    public let extensions: AppAttestExtensions?
 
     private enum CodingKeys: String, CodingKey {
       case replyingPartyId
       case counter
+      case extensions
     }
 
     public init(from decoder: any Decoder) throws {
@@ -33,6 +37,11 @@ extension Assertion {
       self.counter = data[33..<37].reduce(0) { value, byte in
         value << 8 | UInt32(byte)
       }
+      // On iOS 27 and later the extension map follows the counter.
+      self.extensions = AppAttestExtensions(
+        trailingBytes: data[37...],
+        skippedItems: 0
+      )
     }
   }
 }

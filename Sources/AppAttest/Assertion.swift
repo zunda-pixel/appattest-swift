@@ -11,6 +11,10 @@ extension Assertion {
     /// "\(appIDPrefix).\(bundleId)"  SHA256 hash data
     public let relyingPartyId: Data
     public let counter: UInt32
+    /// The authenticator extensions App Attest appends on iOS 27 and later, or `nil` when
+    /// the authenticator data carries no extension map at all. A map whose keys this version
+    /// does not recognise is reported with every property `nil`.
+    public let extensions: AppAttestExtensions?
 
     private enum CodingKeys: String, CodingKey {
       case replyingPartyId
@@ -33,6 +37,13 @@ extension Assertion {
       self.counter = data[33..<37].reduce(0) { value, byte in
         value << 8 | UInt32(byte)
       }
+      // On iOS 27 and later the extension map follows the counter. iOS 27.0 sets the `AT`
+      // flag here even though assertions carry no attested credential data, so the flags byte
+      // says nothing about the layout and the extension map always starts at offset 37.
+      self.extensions = AppAttestExtensions(
+        trailingBytes: data[37...],
+        skippedItems: 0
+      )
     }
   }
 }

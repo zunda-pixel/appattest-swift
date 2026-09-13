@@ -20,6 +20,10 @@ extension Attestation {
     public let counter: UInt32
     public let environment: Environment
     public let credentialId: Data
+    /// The authenticator extensions App Attest appends on iOS 27 and later, or `nil` when
+    /// the authenticator data carries no extension map at all. A map whose keys this version
+    /// does not recognise is reported with every property `nil`.
+    public let extensions: AppAttestExtensions?
 
     private enum CodingKeys: String, CodingKey {
       case replyingPartyId
@@ -68,6 +72,13 @@ extension Attestation {
         )
       }
       self.credentialId = data[55..<(55 + credentialIdLength)]
+
+      // The credential public key follows the credential ID, and on iOS 27 and later the
+      // extension map follows that.
+      self.extensions = AppAttestExtensions(
+        trailingBytes: data[(55 + credentialIdLength)...],
+        skippedItems: 1
+      )
     }
   }
 }

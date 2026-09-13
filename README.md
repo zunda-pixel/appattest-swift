@@ -147,3 +147,39 @@ actor App {
   }
 }
 ```
+
+## 4. [Server] Read the iOS 27 authenticator extensions
+
+On iOS 27 and later, App Attest appends [authenticator extensions](https://developer.apple.com/documentation/devicecheck/attestation-object-validation-guide) to the authenticator data. They are exposed as `extensions`, which is `nil` whenever the authenticator data carries no extension map at all. A map whose keys this package does not recognise is reported with every property `nil`, so a future renaming reads as "nothing readable" rather than as an old device. Treat the extensions as an additional signal rather than as a hard requirement.
+
+```swift
+let attestation = try await appAttest.verifyAttestation(
+  challenge: body.challenge,
+  keyId: body.keyId,
+  attestation: attestation
+)
+
+if let extensions = attestation.authenticatorData.extensions {
+  // `apple_validation_category_01`: how the OS validated the running app.
+  switch extensions.validationCategory {
+  case .appStore, .testFlight:
+    break
+  case nil:
+    // The map carried no readable category; fall back to the other checks.
+    break
+  default:
+    // Development, enterprise, Developer ID, locally signed, ...
+    throw AppAttestError.unexpectedValidationCategory
+  }
+
+  // `apple_bundle_version_01`: the bundle version of the running app.
+  print(extensions.bundleVersion ?? "unknown")
+}
+```
+
+Assertions carry the same extensions on `Assertion.AuthenticatorData.extensions`, but `verifyAssertion` returns only the counter, so reaching them means decoding the assertion yourself with `CBORDecoder().decode(Assertion.self, from: [UInt8](assertion))`.
+
+Those extension bytes sit inside the `rawData` that `verifyAssertion` checks the P-256 signature over, so they are authentic as soon as that call has succeeded **for the same bytes**. The hazard is not that they go unverified, it is that nothing ties the decode to the verification: decode the exact `Data` you passed to `verifyAssertion`, after it returned, and treat an `Assertion` decoded without a matching successful call as attacker-controlled input.
+
+> [!NOTE]
+> The WebAuthn flags byte is not a reliable signal here. `ED` (extension data included) is set by iOS 27.0 but clear in the sample in Apple's validation guide, and iOS 27.0 sets `AT` on assertions that carry no attested credential data. The extensions are therefore located by the trailing CBOR rather than by the flags. The full authenticator data is still kept in `rawData` and used for nonce and signature verification.

@@ -177,7 +177,9 @@ if let extensions = attestation.authenticatorData.extensions {
 }
 ```
 
-Assertions carry the same extensions on `Assertion.AuthenticatorData.extensions`. Note that `verifyAssertion` returns only the counter, so reaching them means decoding the assertion yourself with `CBORDecoder().decode(Assertion.self, from: [UInt8](assertion))`. That decode performs no verification at all: only read those extensions after `verifyAssertion` has succeeded for the same bytes, otherwise `validationCategory` and `bundleVersion` are whatever the caller chose to send. The attestation extensions above are covered by the nonce that `verifyAttestation` checks, so prefer them.
+Assertions carry the same extensions on `Assertion.AuthenticatorData.extensions`, but `verifyAssertion` returns only the counter, so reaching them means decoding the assertion yourself with `CBORDecoder().decode(Assertion.self, from: [UInt8](assertion))`.
+
+Those extension bytes sit inside the `rawData` that `verifyAssertion` checks the P-256 signature over, so they are authentic as soon as that call has succeeded **for the same bytes**. The hazard is not that they go unverified, it is that nothing ties the decode to the verification: decode the exact `Data` you passed to `verifyAssertion`, after it returned, and treat an `Assertion` decoded without a matching successful call as attacker-controlled input.
 
 > [!NOTE]
 > The WebAuthn flags byte is not a reliable signal here. `ED` (extension data included) is set by iOS 27.0 but clear in the sample in Apple's validation guide, and iOS 27.0 sets `AT` on assertions that carry no attested credential data. The extensions are therefore located by the trailing CBOR rather than by the flags. The full authenticator data is still kept in `rawData` and used for nonce and signature verification.

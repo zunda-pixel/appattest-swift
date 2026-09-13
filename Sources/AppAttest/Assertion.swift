@@ -12,7 +12,8 @@ extension Assertion {
     public let relyingPartyId: Data
     public let counter: UInt32
     /// The authenticator extensions App Attest appends on iOS 27 and later, or `nil` when
-    /// the authenticator data carries no extension map this version recognises.
+    /// the authenticator data carries no extension map at all. A map whose keys this version
+    /// does not recognise is reported with every property `nil`.
     public let extensions: AppAttestExtensions?
 
     private enum CodingKeys: String, CodingKey {

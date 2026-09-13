@@ -47,11 +47,9 @@ extension ValidationCategory {
   init?(cbor: CBOR) {
     if let bytes = cbor.bytes {
       guard bytes.count == 4 else { return nil }
-      let rawValue =
-        UInt32(bytes[0])
-        | UInt32(bytes[1]) << 8
-        | UInt32(bytes[2]) << 16
-        | UInt32(bytes[3]) << 24
+      let rawValue = bytes.reversed().reduce(UInt32(0)) { value, byte in
+        value << 8 | UInt32(byte)
+      }
       self.init(rawValue: rawValue)
     } else if let value = cbor.uint64, let rawValue = UInt32(exactly: value) {
       self.init(rawValue: rawValue)

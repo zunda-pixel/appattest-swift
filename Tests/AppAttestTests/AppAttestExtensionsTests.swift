@@ -125,7 +125,9 @@ private let ios27AssertionAuthenticatorData = """
   bGVfdmFsaWRhdGlvbl9jYXRlZ29yeV8wMUQDAAAA
   """
 
-private let ios27AssertionAuthenticatorDataWithoutExtensions =
+/// Minimal assertion authenticator data with no trailing bytes, hand built from the relying
+/// party ID of Apple's sample: 32 byte RP ID hash, clear flags, counter 2.
+private let assertionAuthenticatorDataWithoutExtensions =
   "9EZtaPketsEGIMt+Y8coMkRoXuHWRntUFg51MXIFfwMAAAAAAg=="
 
 private func decodeAuthenticatorData<T: Decodable>(_ type: T.Type, base64: String) throws -> T {
@@ -207,7 +209,7 @@ func assertionExposesIOS27Extensions() throws {
 func assertionWithoutExtensionsHasNoExtensions() throws {
   let authenticatorData = try decodeAuthenticatorData(
     Assertion.AuthenticatorData.self,
-    base64: ios27AssertionAuthenticatorDataWithoutExtensions
+    base64: assertionAuthenticatorDataWithoutExtensions
   )
 
   #expect(authenticatorData.extensions == nil)
@@ -222,13 +224,51 @@ func validationCategoryDecodesAppleLittleEndianEncoding() throws {
   #expect(ValidationCategory(cbor: .textString("4")) == nil)
 }
 
+/// A renamed key must not read as "no extensions", or a server cannot tell a future OS apart
+/// from one that predates the extensions entirely.
 @Test
-func unrelatedTrailingDataIsNotReportedAsExtensions() throws {
-  let authenticatorData = Data(base64Encoded: ios27AssertionAuthenticatorDataWithoutExtensions)!
+func unrecognisedExtensionMapIsReportedWithNoValues() throws {
   // A CBOR map that carries none of the App Attest keys: {"other": 1}
   let trailingData = Data([0xA1, 0x65]) + Data("other".utf8) + Data([0x01])
-  let encodedData = try JSONEncoder().encode(authenticatorData + trailingData)
 
-  let decoded = try JSONDecoder().decode(Assertion.AuthenticatorData.self, from: encodedData)
+  let decoded = try decodeAuthenticatorData(
+    Assertion.AuthenticatorData.self,
+    base64: (Data(base64Encoded: assertionAuthenticatorDataWithoutExtensions)! + trailingData)
+      .base64EncodedString()
+  )
+
+  let extensions = try #require(decoded.extensions)
+  #expect(extensions.validationCategory == nil)
+  #expect(extensions.bundleVersion == nil)
+}
+
+@Test
+func trailingDataThatIsNotAMapIsNotReportedAsExtensions() throws {
+  // A CBOR text string rather than a map.
+  let trailingData = Data([0x65]) + Data("other".utf8)
+
+  let decoded = try decodeAuthenticatorData(
+    Assertion.AuthenticatorData.self,
+    base64: (Data(base64Encoded: assertionAuthenticatorDataWithoutExtensions)! + trailingData)
+      .base64EncodedString()
+  )
+
   #expect(decoded.extensions == nil)
+}
+
+/// iOS 27.0 sets `AT` on assertions even though they carry no attested credential data, so the
+/// extension map has to be located by offset rather than by the flags byte.
+@Test
+func assertionSetsTheAttestedCredentialDataFlagWithoutAttestedCredentialData() throws {
+  let authenticatorData = try decodeAuthenticatorData(
+    Assertion.AuthenticatorData.self,
+    base64: ios27AssertionAuthenticatorData
+  )
+
+  let rawData = authenticatorData.rawData
+  let flags = rawData[rawData.startIndex + 32]
+  #expect(flags & 0x40 != 0)
+  #expect(flags & 0x80 != 0)
+  // 32 byte RP ID hash + 1 flags + 4 counter + 62 extension map, with nothing in between.
+  #expect(rawData.count == 99)
 }

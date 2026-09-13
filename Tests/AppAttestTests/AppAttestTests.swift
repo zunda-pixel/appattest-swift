@@ -73,16 +73,11 @@ func serverCode(
   )
   _ = counter
 
-  // `verifyAssertion` only returns the counter, so decode the assertion again to reach its
-  // authenticator data.
-  let decodedAssertion = try CBORDecoder().decode(Assertion.self, from: [UInt8](assertion))
-
-  print("attestation extensions: \(String(describing: attestation.authenticatorData.extensions))")
-  print(
-    "assertion extensions: \(String(describing: decodedAssertion.authenticatorData.extensions))"
-  )
-
   guard #available(iOS 27.0, macOS 27.0, *) else { return }
+
+  // `verifyAssertion` only returns the counter, so decode the assertion again to reach its
+  // authenticator data. Safe here only because `verifyAssertion` already verified these bytes.
+  let decodedAssertion = try CBORDecoder().decode(Assertion.self, from: [UInt8](assertion))
 
   // iOS 27 and later append the App Attest authenticator extensions to the authenticator data.
   let attestationExtensions = try #require(attestation.authenticatorData.extensions)

@@ -8,9 +8,12 @@ import Foundation
 /// The extensions are therefore detected by the presence of trailing CBOR rather than by the
 /// flag.
 ///
-/// Every property is optional: authenticator data produced before iOS 27 carries no
-/// extensions at all, and a key that is missing or encoded in an unexpected way is reported
-/// as `nil` rather than failing the verification, which relies on `rawData` instead.
+/// Nothing here is ever a hard requirement. The whole value is `nil` only when the
+/// authenticator data carries no extension map at all, and an individual key that is missing
+/// or encoded in an unexpected way is reported as `nil` rather than failing the verification,
+/// which relies on `rawData` instead. A map whose keys this version does not recognise is
+/// therefore reported with every property `nil`, which says "extensions present, nothing
+/// readable" instead of masquerading as a device that predates them.
 ///
 /// https://developer.apple.com/documentation/devicecheck/attestation-object-validation-guide
 public struct AppAttestExtensions: Sendable, Hashable {
@@ -33,18 +36,14 @@ extension AppAttestExtensions {
   static let bundleVersionKey = "apple_bundle_version_01"
 
   init?(cbor: CBOR) {
+    // The authenticator extension model puts a map here, so any map is one, recognised keys
+    // or not. Requiring a known key instead would report a future renaming as no extensions.
     guard case .map = cbor else { return nil }
 
-    let validationCategory = cbor[Self.validationCategoryKey]
-      .flatMap(ValidationCategory.init(cbor:))
-    let bundleVersion = cbor[Self.bundleVersionKey]?.string
-
-    // Trailing CBOR that carries none of the known keys is not an App Attest extension map.
-    guard validationCategory != nil || bundleVersion != nil else { return nil }
-
     self.init(
-      validationCategory: validationCategory,
-      bundleVersion: bundleVersion
+      validationCategory: cbor[Self.validationCategoryKey]
+        .flatMap(ValidationCategory.init(cbor:)),
+      bundleVersion: cbor[Self.bundleVersionKey]?.string
     )
   }
 
